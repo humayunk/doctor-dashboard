@@ -14,7 +14,9 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Sidebar />
-        {children}
+        <div className="p-4 sm:ml-64">
+          {children}
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
       </body>
     </html>
