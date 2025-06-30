@@ -83,7 +83,7 @@ function Status({ status }) {
     case 'revoked':
       return (<>❌ revoked</>);
     case 'submitted':
-      return (<>✅ <a href="/patients/details" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">submitted</a></>);
+      return (<>✅ <a href="/patients/details/janedoe/intake" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">submitted</a></>);
     default:
       return status;
   }

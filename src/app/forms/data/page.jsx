@@ -1,12 +1,12 @@
-import { dataForm } from "../../data.js"
+import { props } from "@/app/data.js"
 import { Tabbar } from "@/components/ui/tabbar"
 import { Table } from "@/components/table"
 
 export default function Page() {
   return (
     <>
-      <Tabbar />
-      <Table props={dataForm} />
+      <Tabbar tabs={props.form.tabs} />
+      <Table props={props.form} />
     </>
   );
 }
