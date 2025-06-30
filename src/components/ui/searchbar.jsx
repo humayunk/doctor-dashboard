@@ -1,4 +1,4 @@
-export default function Searchbar() {
+function Searchbar() {
   return (
     <>
       <label htmlFor="table-search" className="sr-only">Search</label>
@@ -10,4 +10,8 @@ export default function Searchbar() {
       </div>
     </>
   )
+}
+
+export {
+  Searchbar,
 }

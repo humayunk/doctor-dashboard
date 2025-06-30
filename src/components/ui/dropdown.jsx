@@ -13,6 +13,15 @@ function Button({ props: { buttonID, menuID } }) {
   )
 }
 
+function CustomizeDropdown({ props }) {
+  return (
+    <div>
+      <Button props={props} />
+      <Menu props={props}/>
+    </div>
+  )
+}
+
 function Menu({ props: { columns, menuID } }) {
   return (
     <div id={menuID} className="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600">
@@ -34,11 +43,6 @@ function Menu({ props: { columns, menuID } }) {
   )
 }
 
-export default function CustomizeDropdown({ props }) {
-  return (
-    <div>
-      <Button props={props} />
-      <Menu props={props}/>
-    </div>
-  )
+export {
+  CustomizeDropdown,
 }

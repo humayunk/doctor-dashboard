@@ -1,5 +1,5 @@
 import './globals.css'
-import Sidebar from "@/components/sidebar"
+import { Sidebar } from "@/components/sidebar"
 
 export const metadata = {
   title: 'Health Data Safe',
