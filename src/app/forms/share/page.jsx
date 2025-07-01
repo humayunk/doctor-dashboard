@@ -1,5 +1,4 @@
 import { props } from "@/app/data.js"
-import { Searchbar } from "@/components/ui/searchbar"
 import { Tabbar } from "@/components/ui/tabbar"
 
 export default function Page() {
