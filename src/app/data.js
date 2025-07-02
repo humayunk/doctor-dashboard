@@ -29,9 +29,9 @@ const props = {
       { display: 'JD', fname: 'John', lname: 'Doe', dob: '1988-06-20' },
     ],
     forms: [
-      { name: 'Intake Form', status: 'published' },
-      { name: 'Endometriosis Survey', status: 'published' },
-      { name: 'Daily Cycle Entries', status: 'draft' },
+      { name: 'Intake Form', href: '/forms/data' },
+      { name: 'Endometriosis Survey', href: '#' },
+      { name: 'Daily Cycle Entries', href: '#' },
     ],
     menuID: 'formsDropdownDefaultCheckbox',
     tabs: [
