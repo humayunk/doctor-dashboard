@@ -37,7 +37,7 @@ const props = {
     tabs: [
       { label: 'Data', href: '/forms/data' },
       { label: 'Form', href: '/forms/form' },
-      { label: 'Share', href: '/forms/share' },
+      { label: 'Send to Patient', href: '/forms/share' },
     ],
   },
   patient: {
