@@ -1,4 +1,5 @@
 import { CustomizeDropdown } from "@/components/ui/dropdown"
+import { IconFilter, IconSort } from "@/components/ui/icons"
 import { Searchbar } from "@/components/ui/searchbar"
 
 function Body({ data }) {
@@ -51,18 +52,14 @@ function Header({ columns, options }) {
             <div className="flex items-center">
               {column}
               <button id={`dropdownDefaultButton${column}`} data-dropdown-toggle={`dropdown${column}`}>
-                <svg className="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                </svg>
+                <IconFilter />
               </button>
               {/* dropdown menu */}
               <div id={`dropdown${column}`} className="normal-case z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600">
                 <ul className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200">
                   <li>
                     <a href="#">
-                      <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.7" d="M8 20V10m0 10-3-3m3 3 3-3m5-13v10m0-10 3 3m-3-3-3 3"/>
-                      </svg>
+                      <IconSort />
                     </a>
                   </li>
                 </ul>
