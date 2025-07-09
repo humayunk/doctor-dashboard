@@ -1,0 +1,266 @@
+import { appTemplates, HDSModel, pryv } from "hds-lib-js"
+
+/** The name of this application */
+const APP_MANAGING_NAME = 'HDS Doctor Dashboard';
+/** The "base" stream for this App */
+const APP_MANAGING_STREAMID = 'app-dr-hds';
+/** initialized during pryvAuthStateChange */
+let appManaging;
+/** Marked as "OLD" but still seems necessary */
+let drConnection = null;
+/** from common-lib.js */
+let model;
+//
+const questionnaryButtons = {};
+/** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
+const serviceInfoUrl = 'https://demo.datasafe.dev/reg/service/info';
+/** from common-data-defs.js */
+const v2 = {
+  'questionary-x': {
+    title: 'Demo with Profile and TTC-TTA 3',
+    permissionsPreRequest: [
+      {streamId: 'profile'},
+      {streamId: 'fertility'},
+    ],
+    forms: {
+      profile: {
+        type: 'permanent',
+        key: 'profile-x',
+        name: 'Profile',
+        itemKeys: [
+          'profile-name',
+          'profile-surname',
+          'profile-sex',
+          'family-children-count',
+          'fertility-miscarriages-count'
+        ]
+      },
+      history: {
+        type: 'recurring',
+        key: 'recurring-x',
+        name: 'History',
+        itemKeys: [
+          'fertility-ttc-tta',
+          'body-weight'
+        ]
+      }
+    }
+  },
+  'questionnary-basic': {
+    title: 'Basic Profile and Cycle Information 3',
+    permissionsPreRequest: [
+      {streamId: 'profile'}
+    ],
+    forms: {
+      profile: {
+        type: 'permanent',
+        key: 'profile-b',
+        name: 'Profile',
+        itemKeys: [
+          'profile-name',
+          'profile-surname',
+          'profile-date-of-birth'
+        ]
+      },
+      history: {
+        type: 'recurring',
+        key: 'recurring-b',
+        name: 'History',
+        itemKeys: [
+          'body-weight',
+          'body-vulva-wetness-feeling',
+          'body-vulva-mucus-inspect',
+          'body-vulva-mucus-stretch',
+          'fertility-cycles-start',
+          'fertility-cycles-ovulation'
+        ]
+      }
+    }
+  }
+}
+
+/**
+ * Return pryv.Connection with property HDSModel Loaded
+ * @param {string} apiEndpoint
+ * @returns
+ */
+async function connectAPIEndpoint (apiEndpoint) {
+  const connection = new pryv.Connection(apiEndpoint);
+  connection.hdsModel = await initHDSModel();
+  return connection;
+}
+
+/**
+ * exposes appManaging for the app
+ */
+function getAppManaging () {
+  return appManaging;
+}
+
+// ------- Get doctor's info -------- //
+function getQuestionnaryFromUrl() {
+  const params = new URLSearchParams(document.location.search);
+  const questionaryId = params.get('questionaryId');
+  return questionaryId
+}
+
+function hdsModel () {
+  if (!model) { throw new Error('Initialize model with `initHDSModel()` first') };
+  return model;
+}
+
+/**
+ * Right after logging in:
+ * Check if the account has the two forms
+ * This step will be implemented in the doctor dashboard when the "create form" will be developed
+ * */
+async function initDemoAccount (apiEndpoint) {
+  drConnection = await connectAPIEndpoint(apiEndpoint);
+  const drConnectionInfo = await drConnection.accessInfo();
+  console.log('*** initDemoAccount - drConnectionInfo ***', drConnectionInfo);
+  appManaging = await appTemplates.AppManagingAccount.newFromConnection(APP_MANAGING_STREAMID, drConnection);
+
+  // -- check current collectors (forms)
+  const collectors = await appManaging.getCollectors();
+  for (const [questionaryId, questionary] of Object.entries(v2)) {
+    // check if collector exists
+    const found = collectors.find(c => c.name === questionary.title);
+    if (found) {
+      console.log('*** initDemoAccount found ***', found);
+      continue; // stop here if exists
+    }
+    console.log('*** initDemoAccount creating collector for ***', questionary);
+    const newCollector = await appManaging.createCollector(questionary.title);
+
+    // create the request content
+    // 1- get all items from the questionnaire sections
+    const itemKeys = [];
+    for (const formContent of Object.values(questionary.forms)) {
+      itemKeys.push(...formContent.itemKeys);
+    }
+    // 2 - get the permissions with eventual preRequest
+    const preRequest = questionary.permissionsPreRequest || [];
+    const permissions = hdsModel().authorizations.forItemKeys(itemKeys, { preRequest });
+
+    const requestContent = {
+      version: '0',
+      title: {
+        en: questionary.title
+      },
+      requester: {
+        name: 'Username ' + drConnectionInfo.user.username
+      },
+      description: {
+        en: 'Short Description to be updated: ' + questionary.title
+      },
+      consent: {
+        en: 'This is a consent message to be set'
+      },
+      permissions,
+      app: {
+        id: 'dr-form',
+        url: 'https://xxx.yyy',
+        data: { // will be used by patient app
+          forms: questionary.forms
+        }
+      }
+    };
+    newCollector.statusData.requestContent = requestContent;
+    await newCollector.save(); // save the data (done when the form is edited)
+    await newCollector.publish();
+    console.log('*** initDemoAccount published ***', newCollector);
+  }
+  console.log('*** initDemoAccount with ***', collectors);
+}
+
+async function initHDSModel () {
+  if (!model) {
+    const service = new pryv.Service(serviceInfoUrl);
+    const serviceInfo = await service.info();
+    model = new HDSModel(serviceInfo.assets['hds-model']);
+    console.log('*** model ***', model);
+    await model.load();
+  }
+  return model;
+}
+
+function onload(event) {
+  stateChange('loggedOut');
+  showLoginButton('login-button', stateChange);
+};
+
+async function setQuestionnaries() {
+  // -- on load
+  const selectedQuestionnary = getQuestionnaryFromUrl();
+
+  const appManaging = getAppManaging();
+
+  const collectors = await appManaging.getCollectors();
+  for (const collector of collectors) {
+    console.log('*** collector.name ***', collector.name);
+    console.log('*** collector.id ***', collector.id);
+  };
+
+  if (selectedQuestionnary) {
+    showQuestionnary(selectedQuestionnary);
+  }
+}
+
+function showLoginButton (loginSpanId, stateChangeCallBack) {
+  const authSettings = {
+    spanButtonID: loginSpanId, // div id the DOM that will be replaced by the Service specific button
+    onStateChange: pryvAuthStateChange, // event Listener for Authentication steps
+    authRequest: {
+      // See: https://api.pryv.com/reference/#auth-request
+      requestingAppId: APP_MANAGING_STREAMID, // to customize for your own app
+      requestedPermissions: [
+        {
+          streamId: APP_MANAGING_STREAMID,
+          defaultName: APP_MANAGING_NAME,
+          level: "manage",
+        },
+      ],
+      clientData: {
+        'app-web-auth:ensureBaseStreams': [ // this is handled by custom app web Auth3 (might be migrated in permission request)
+          { id: 'applications', name: 'Applications' },
+          { id: APP_MANAGING_STREAMID, name: APP_MANAGING_NAME, parentId: 'applications' }
+        ],
+        "app-web-auth:description": {
+          type: "note/txt",
+          content:
+            "This app allows to send invitation links to patients and visualize and export answers.",
+        },
+      },
+    },
+  };
+
+
+  pryv.Browser.setupAuth(authSettings, serviceInfoUrl);
+
+  async function pryvAuthStateChange(state) {
+    // called each time the authentication state changes
+    console.log("*** pryvAuthStateChange ***", state);
+    if (state.id === pryv.Browser.AuthStates.AUTHORIZED) {
+      await initDemoAccount(state.apiEndpoint);
+      stateChangeCallBack("loggedIN");
+    }
+    if (state.id === pryv.Browser.AuthStates.INITIALIZED) {
+      drConnection = null;
+      appManaging = null;
+      stateChangeCallBack("loggedOUT");
+    }
+  }
+}
+
+async function stateChange(state) {
+  if (state === 'loggedIN') {
+    console.log('*** logged in ***');
+    setQuestionnaries();
+  } else {
+    console.log('*** not logged in ***');
+  }
+}
+
+export {
+  onload,
+}

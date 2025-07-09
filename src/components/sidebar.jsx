@@ -1,3 +1,6 @@
+'use client'
+import { useEffect } from 'react';
+import { onload } from "@/app/dr-lib.js"
 import { IconForms, IconHamburger, IconLifesaver, IconLogout, IconPeople } from "@/components/ui/icons"
 
 function FormEntry({ href, name }) {
@@ -11,6 +14,26 @@ function FormEntry({ href, name }) {
 }
 
 function Sidebar({ forms }) {
+  useEffect(() => {
+    if (document.readyState !== 'complete') {
+      const handler = () => {
+        console.log('*** load ***');
+        onload();
+      };
+      window.addEventListener('load', handler);
+
+      return () => {
+        window.removeEventListener('load', handler);
+      };
+    } else {
+      const timeout = window.setTimeout(() => {
+        console.log('*** timeout ***');
+        onload();
+      }, 0);
+      return () => window.clearTimeout(timeout);
+    }
+  }, []);
+
   return (
     <>
       <button data-drawer-target="sidebar-multi-level-sidebar" data-drawer-toggle="sidebar-multi-level-sidebar" aria-controls="sidebar-multi-level-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -49,8 +72,9 @@ function Sidebar({ forms }) {
             </li>
             <li>
               <a href="#" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                <IconLogout />
-                <span className="flex-1 ms-3 whitespace-nowrap">Account</span>
+                {/* <IconLogout /> */}
+                {/* <span className="flex-1 ms-3 whitespace-nowrap">Account</span> */}
+                <span id="login-button" className="flex-1 whitespace-nowrap"></span>
               </a>
             </li>
           </ul>
