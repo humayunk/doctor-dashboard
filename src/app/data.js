@@ -35,9 +35,9 @@ const props = {
     ],
     menuID: 'formsDropdownDefaultCheckbox',
     tabs: [
-      { label: 'Data', href: '/forms/data' },
-      { label: 'Form', href: '/forms/form' },
-      { label: 'Send to Patient', href: '/forms/share' },
+      { label: 'Data', href: 'data' },
+      { label: 'Form', href: 'form' },
+      { label: 'Send to Patient', href: 'share' },
     ],
   },
   patient: {
