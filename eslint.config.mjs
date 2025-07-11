@@ -11,20 +11,20 @@ export default defineConfig([
     plugins: { js },
     extends: ["js/recommended"],
     languageOptions: {
-      globals: globals.browser
+      globals: globals.browser,
     },
   },
   {
     rules: {
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
-    }
+    },
   },
   {
     settings: {
       react: {
         version: "detect",
-      }
-    }
+      },
+    },
   },
 ]);

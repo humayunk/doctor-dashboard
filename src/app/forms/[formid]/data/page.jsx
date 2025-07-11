@@ -1,6 +1,6 @@
-import { props } from "@/app/data.js"
-import { Tabbar } from "@/components/ui/tabbar"
-import { Table } from "@/components/table"
+import { props } from "@/app/data.js";
+import { Tabbar } from "@/components/ui/tabbar";
+import { Table } from "@/components/table";
 
 export default function Page() {
   return (

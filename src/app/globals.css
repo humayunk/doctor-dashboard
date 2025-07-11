@@ -4,8 +4,8 @@
 @plugin "daisyui";
 
 @theme {
-  --font-body: 'Inter', 'ui-sans-serif', sans-serif;
-  --font-mono: 'ui-monospace', 'monospace';
-  --font-sans: 'Inter Tight', 'Inter', 'ui-sans-serif', sans-serif;
+  --font-body: "Inter", "ui-sans-serif", sans-serif;
+  --font-mono: "ui-monospace", "monospace";
+  --font-sans: "Inter Tight", "Inter", "ui-sans-serif", sans-serif;
   --font-weight: 300;
 }
