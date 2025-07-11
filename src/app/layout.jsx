@@ -1,5 +1,4 @@
 import './globals.css'
-import { props } from "@/app/data.js"
 import { Sidebar } from "@/components/sidebar"
 
 export const metadata = {
@@ -14,7 +13,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="https://healthdatasafe.github.io/style/images/Favicon/favicon.ico" type="image/x-icon" />
       </head>
       <body>
-        <Sidebar forms={props.form.forms} />
+        <Sidebar />
         <div className="p-4 sm:ml-64">
           {children}
         </div>

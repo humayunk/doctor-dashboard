@@ -1,6 +1,6 @@
 'use client'
-import { useEffect } from 'react';
-import { onload } from "@/app/dr-lib.js"
+import { useEffect, useState } from 'react';
+import { setQuestionnaries, showLoginButton } from "@/app/dr-lib.js"
 import { IconForms, IconHamburger, IconLifesaver, IconLogout, IconPeople } from "@/components/ui/icons"
 
 function FormEntry({ href, name }) {
@@ -13,25 +13,18 @@ function FormEntry({ href, name }) {
   )
 }
 
-function Sidebar({ forms }) {
-  useEffect(() => {
-    if (document.readyState !== 'complete') {
-      const handler = () => {
-        console.log('*** load ***');
-        onload();
-      };
-      window.addEventListener('load', handler);
+function Sidebar() {
+  const [forms, setForms] = useState([]);
 
-      return () => {
-        window.removeEventListener('load', handler);
-      };
-    } else {
-      const timeout = window.setTimeout(() => {
-        console.log('*** timeout ***');
-        onload();
-      }, 0);
-      return () => window.clearTimeout(timeout);
-    }
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      showLoginButton('login-button', (state) => {
+        if (state === 'loggedIN') {
+          setQuestionnaries().then(data => setForms(data));
+        }
+      });
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, []);
 
   return (
@@ -59,8 +52,8 @@ function Sidebar({ forms }) {
                 <span className="flex-1 ms-3 whitespace-nowrap">Forms</span>
               </div>
             </li>
-            {forms.map(({ href, name }) => (
-              <FormEntry key={name} href={href} name={name} />
+            {forms.map(({ href, id, name }) => (
+              <FormEntry key={id} href={href} name={name} />
             ))}
           </ul>
           <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">

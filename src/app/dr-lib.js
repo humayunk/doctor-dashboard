@@ -10,8 +10,6 @@ let appManaging;
 let drConnection = null;
 /** from common-lib.js */
 let model;
-//
-const questionnaryButtons = {};
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
 const serviceInfoUrl = 'https://demo.datasafe.dev/reg/service/info';
 /** from common-data-defs.js */
@@ -97,13 +95,6 @@ function getAppManaging () {
   return appManaging;
 }
 
-// ------- Get doctor's info -------- //
-function getQuestionnaryFromUrl() {
-  const params = new URLSearchParams(document.location.search);
-  const questionaryId = params.get('questionaryId');
-  return questionaryId
-}
-
 function hdsModel () {
   if (!model) { throw new Error('Initialize model with `initHDSModel()` first') };
   return model;
@@ -184,26 +175,11 @@ async function initHDSModel () {
   return model;
 }
 
-function onload(event) {
-  stateChange('loggedOut');
-  showLoginButton('login-button', stateChange);
-};
-
 async function setQuestionnaries() {
-  // -- on load
-  const selectedQuestionnary = getQuestionnaryFromUrl();
-
   const appManaging = getAppManaging();
-
   const collectors = await appManaging.getCollectors();
-  for (const collector of collectors) {
-    console.log('*** collector.name ***', collector.name);
-    console.log('*** collector.id ***', collector.id);
-  };
-
-  if (selectedQuestionnary) {
-    showQuestionnary(selectedQuestionnary);
-  }
+  const forms = collectors.map(c => ({ href: `/forms/${c.id}/data`, id: c.id, name: c.name }));
+  return forms;
 }
 
 function showLoginButton (loginSpanId, stateChangeCallBack) {
@@ -252,15 +228,7 @@ function showLoginButton (loginSpanId, stateChangeCallBack) {
   }
 }
 
-async function stateChange(state) {
-  if (state === 'loggedIN') {
-    console.log('*** logged in ***');
-    setQuestionnaries();
-  } else {
-    console.log('*** not logged in ***');
-  }
-}
-
 export {
-  onload,
+  showLoginButton,
+  setQuestionnaries,
 }
