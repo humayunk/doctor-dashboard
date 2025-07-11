@@ -34,7 +34,8 @@ function Sidebar() {
         <IconHamburger />
       </button>
 
-      <aside id="sidebar-multi-level-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+      {/* #HACK - TODO: Fix hydration warning instead of ignoring */}
+      <aside id="sidebar-multi-level-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar" suppressHydrationWarning={true} >
         <a href="/">
           <img src="https://healthdatasafe.github.io/style/images/Horizontal/hds-logo-hz-1024x400-hz-color.png" alt="Logo" className="mx-2" width="200px" />
         </a>
