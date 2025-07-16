@@ -2,19 +2,17 @@ import { props } from "@/app/data.js";
 import { Tabbar } from "@/components/ui/tabbar";
 
 export default function Page() {
+  const { form } = props;
   return (
     <>
-      <Tabbar tabs={props.form.tabs} />
+      <Tabbar tabs={form.tabs} />
       <div className="m-4 ml-8">
         <div className="prose m-4 ml-8">
-          <h1 className="font-sans font-light uppercase">Intake Form</h1>
+          <h1 className="font-sans font-light uppercase">{form.title}</h1>
           <h2 className="font-normal">Description</h2>
-          <p>
-            This form comprises the initial intake questions before your first
-            visit with Dr. Doe.
-          </p>
+          <p>{form.description}</p>
           <h2 className="font-normal">Consent</h2>
-          <p>This form requires read & write access to Profile data.</p>
+          <p>{form.consent}</p>
           <form className="max-w-md">
             <h2 className="font-normal">Profile</h2>
             <div className="relative z-0 w-full mb-5 group">

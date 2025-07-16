@@ -25,6 +25,7 @@ const props = {
   form: {
     buttonID: "formsDropdownCheckboxButton",
     columns: ["Display Name", "First Name", "Last Name", "DOB"],
+    consent: "This form requires read & write access to Profile data.",
     data: [
       { display: "Jane Doe", fname: "Jane", lname: "Doe", dob: "1990-01-19" },
       { display: "Suzie Q", fname: "Suzie", lname: "Queue", dob: "1985-03-14" },
@@ -36,6 +37,8 @@ const props = {
       },
       { display: "JD", fname: "John", lname: "Doe", dob: "1988-06-20" },
     ],
+    description:
+      "This form comprises the initial intake questions before your first visit with Dr. Doe.",
     forms: [
       { name: "Intake Form", href: "/forms/data" },
       { name: "Endometriosis Survey", href: "#" },
@@ -47,6 +50,7 @@ const props = {
       { label: "Form", href: "form" },
       { label: "Send to Patient", href: "share" },
     ],
+    title: "Intake Form",
   },
   patient: {
     buttonID: "patientsDropdownCheckboxButton",
