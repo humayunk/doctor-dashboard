@@ -1,9 +1,10 @@
+import { props } from "@/app/data.js";
 import { appTemplates, HDSModel, pryv } from "hds-lib-js";
 
 /** The name of this application */
-const APP_MANAGING_NAME = "HDS Doctor Dashboard";
+const APP_MANAGING_NAME = "HDS Dr App PoC";
 /** The "base" stream for this App */
-const APP_MANAGING_STREAMID = "hds-dr-dashboard";
+const APP_MANAGING_STREAMID = "app-dr-hds";
 /** initialized during pryvAuthStateChange */
 let appManaging;
 /** Marked as "OLD" but still seems necessary */
@@ -232,4 +233,21 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
   }
 }
 
-export { showLoginButton, setQuestionnaries };
+async function showQuestionnary(questionaryId) {
+  console.log("## showQuestionnaryId", questionaryId);
+
+  const appManaging = getAppManaging();
+  // get questionnary (Controller)
+  const collector = await appManaging.getCollectorById(questionaryId);
+  await collector.init(); // load controller data only when needed
+  // show details
+  const status = collector.statusData;
+  console.log("*** status ***", status);
+  console.log("*** form ***", props.form);
+  props.form.title = status.requestContent.title.en;
+  props.form.description = status.requestContent.description.en;
+  props.form.consent = status.requestContent.consent.en;
+  console.log("*** form ***", props.form);
+}
+
+export { setQuestionnaries, showLoginButton, showQuestionnary };
