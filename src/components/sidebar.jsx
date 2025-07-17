@@ -1,6 +1,4 @@
-"use client";
-import { useEffect, useState } from "react";
-import { setQuestionnaries, showLoginButton } from "@/app/dr-lib.js";
+import { logout } from "@/app/dr-lib.js";
 import {
   IconForms,
   IconHamburger,
@@ -22,20 +20,9 @@ function FormEntry({ href, name }) {
   );
 }
 
-function Sidebar() {
-  const [forms, setForms] = useState([]);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      showLoginButton("login-button", (state) => {
-        if (state === "loggedIN") {
-          setQuestionnaries().then((data) => setForms(data));
-        }
-      });
-    }, 0);
-    return () => window.clearTimeout(timeout);
-  }, []);
-
+function Sidebar({ user }) {
+  const props = JSON.parse(localStorage.getItem("props"));
+  const forms = props.form.forms;
   return (
     <>
       <button
@@ -99,15 +86,13 @@ function Sidebar() {
             </li>
             <li>
               <a
-                href="#"
+                onClick={logout}
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >
-                {/* <IconLogout /> */}
-                {/* <span className="flex-1 ms-3 whitespace-nowrap">Account</span> */}
-                <span
-                  id="login-button"
-                  className="flex-1 whitespace-nowrap"
-                ></span>
+                <IconLogout />
+                <span className="flex-1 ms-3 whitespace-nowrap">
+                  {user}: Log Out
+                </span>
               </a>
             </li>
           </ul>

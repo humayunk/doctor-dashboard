@@ -1,8 +1,10 @@
+"use client";
 import { props } from "@/app/data.js";
 import { Tabbar } from "@/components/ui/tabbar";
 
 export default function Page() {
-  const { form } = props;
+  const p = localStorage.getItem("props");
+  const { form } = JSON.parse(p) || props;
   return (
     <>
       <Tabbar tabs={form.tabs} />

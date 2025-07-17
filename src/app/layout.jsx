@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Sidebar } from "@/components/sidebar";
+import { Body } from "@/components/body";
 
 export const metadata = {
   title: "Health Data Safe",
@@ -17,9 +17,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <Sidebar />
-        <div className="p-4 sm:ml-64">{children}</div>
-        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+        <Body children={children} />
       </body>
     </html>
   );

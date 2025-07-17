@@ -1,5 +1,5 @@
 import { props } from "@/app/data.js";
-import { appTemplates, HDSModel, pryv } from "hds-lib-js";
+import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
 
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
@@ -100,6 +100,7 @@ async function initDemoAccount(apiEndpoint) {
   drConnection = await connectAPIEndpoint(apiEndpoint);
   const drConnectionInfo = await drConnection.accessInfo();
   console.log("*** initDemoAccount - drConnectionInfo ***", drConnectionInfo);
+  localStorage.setItem("user", drConnectionInfo.user.username);
   appManaging = await appTemplates.AppManagingAccount.newFromConnection(
     APP_MANAGING_STREAMID,
     drConnection,
@@ -172,15 +173,21 @@ async function initHDSModel() {
   return model;
 }
 
+function logout() {
+  localStorage.clear();
+  console.log("## logout");
+}
+
 async function setQuestionnaries() {
   const appManaging = getAppManaging();
   const collectors = await appManaging.getCollectors();
-  const forms = collectors.map((c) => ({
+  props.form.forms = collectors.map((c) => ({
     href: `/forms/${c.id}/data`,
     id: c.id,
     name: c.name,
   }));
-  return forms;
+  console.log("## forms", props.form.forms);
+  localStorage.setItem("props", JSON.stringify(props));
 }
 
 function showLoginButton(loginSpanId, stateChangeCallBack) {
@@ -224,6 +231,7 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
     if (state.id === pryv.Browser.AuthStates.AUTHORIZED) {
       await initDemoAccount(state.apiEndpoint);
       stateChangeCallBack("loggedIN");
+      showQuestionnary("app-dr-hds-nhsns8v");
     }
     if (state.id === pryv.Browser.AuthStates.INITIALIZED) {
       drConnection = null;
@@ -237,17 +245,16 @@ async function showQuestionnary(questionaryId) {
   console.log("## showQuestionnaryId", questionaryId);
 
   const appManaging = getAppManaging();
-  // get questionnary (Controller)
   const collector = await appManaging.getCollectorById(questionaryId);
   await collector.init(); // load controller data only when needed
   // show details
-  const status = collector.statusData;
-  console.log("*** status ***", status);
+  const { requestContent } = collector.statusData;
+  props.form.consent = l(requestContent.consent);
+  props.form.requester = requestContent.requester.name;
+  props.form.description = l(requestContent.description);
+  props.form.title = l(requestContent.title);
   console.log("*** form ***", props.form);
-  props.form.title = status.requestContent.title.en;
-  props.form.description = status.requestContent.description.en;
-  props.form.consent = status.requestContent.consent.en;
-  console.log("*** form ***", props.form);
+  localStorage.setItem("props", JSON.stringify(props));
 }
 
-export { setQuestionnaries, showLoginButton, showQuestionnary };
+export { logout, setQuestionnaries, showLoginButton, showQuestionnary };

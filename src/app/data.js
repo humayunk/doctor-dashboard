@@ -40,11 +40,12 @@ const props = {
     description:
       "This form comprises the initial intake questions before your first visit with Dr. Doe.",
     forms: [
-      { name: "Intake Form", href: "/forms/data" },
-      { name: "Endometriosis Survey", href: "#" },
-      { name: "Daily Cycle Entries", href: "#" },
+      // { name: "Intake Form", href: "/forms/data", id: 1 },
+      // { name: "Endometriosis Survey", href: "#", id: 2 },
+      // { name: "Daily Cycle Entries", href: "#", id: 3 },
     ],
     menuID: "formsDropdownDefaultCheckbox",
+    requester: "Dr. Doe.",
     tabs: [
       { label: "Data", href: "data" },
       { label: "Form", href: "form" },
