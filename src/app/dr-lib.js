@@ -78,6 +78,35 @@ async function connectAPIEndpoint(apiEndpoint) {
 }
 
 /**
+ * Link an event to a data field from form
+ * @param {*} event
+ */
+function dataFieldFromEvent(event) {
+  const itemDef = model.itemsDefs.forEvent(event, false);
+  if (!itemDef) {
+    console.error("## itemDef not found for event", event);
+    return null;
+  }
+  const field = {
+    key: itemDef.key,
+    label: itemDef.data.label.en,
+    type: itemDef.data.type,
+    value: event.content,
+    event: event,
+  };
+  if (field.type === "date") {
+    const date = new Date(event.content);
+    if (!isNaN(date)) {
+      field.value = date.toISOString().split("T")[0]; // format YYYY-MM-DD
+    } else {
+      console.error("## Error parsing date", event.content);
+      field.value = "";
+    }
+  }
+  return field;
+}
+
+/**
  * exposes appManaging for the app
  */
 function getAppManaging() {
@@ -118,6 +147,9 @@ async function getPatientsData(collector) {
   return { headers, patientsData };
 }
 
+/**
+ * get patients details
+ */
 async function getPatientDetails(invite, itemDefs) {
   const patient = {
     invite,
@@ -135,9 +167,8 @@ async function getPatientDetails(invite, itemDefs) {
   );
 
   // --
-  // const patientInfo = await invite.checkAndGetAccessInfo();
-  // if (patientInfo === null) return patient;
-  return patient;
+  const patientInfo = await invite.checkAndGetAccessInfo();
+  if (patientInfo === null) return patient;
   patient.username = patientInfo.user.username;
 
   // -- get data
@@ -335,10 +366,11 @@ async function showQuestionnary(questionaryId) {
   props.form.title = l(requestContent.title);
 
   const { headers, patientsData } = await getPatientsData(collector);
-  props.form.columns = Object.entries(headers).map(([key, value]) => value);
-  // props.patientsData = patientsData;
-  console.log("## columns", props.form.columns);
-  console.log("## patientsData", patientsData);
+  props.form.data = patientsData.map((x) => ({
+    status: x.status,
+    reference: x.inviteName,
+    date: x.createdAt,
+  }));
 
   localStorage.setItem("props", JSON.stringify(props));
 }
