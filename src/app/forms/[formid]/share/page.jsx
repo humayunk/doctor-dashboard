@@ -1,10 +1,16 @@
+"use client";
 import { props } from "@/app/data.js";
 import { IconQR } from "@/components/ui/icons";
 import { Tabbar } from "@/components/ui/tabbar";
 
 export default function Page() {
+  const p = localStorage.getItem("props");
+  const { form } = JSON.parse(p) || props;
   return (
     <>
+      <article className="prose mb-4">
+        <h2 className="font-normal">{form.title}</h2>
+      </article>
       <Tabbar tabs={props.form.tabs} />
       <div className="mt-8 grid place-items-center">
         <IconQR />

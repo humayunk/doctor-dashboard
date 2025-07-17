@@ -1,3 +1,5 @@
+"use client";
+import { usePathname } from "next/navigation";
 import { logout } from "@/app/dr-lib.js";
 import {
   IconForms,
@@ -8,16 +10,22 @@ import {
 } from "@/components/ui/icons";
 
 function FormEntry({ href, name }) {
+  const isCurrent = getId(usePathname()) === getId(href);
+  const classes = isCurrent
+    ? "flex items-center p-2 text-blue-600 bg-gray-100 rounded-lg active dark:bg-gray-800 dark:text-blue-500 group"
+    : "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group";
+
   return (
     <li key={name}>
-      <a
-        href={href}
-        className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-      >
+      <a href={href} className={classes}>
         {name}
       </a>
     </li>
   );
+}
+
+function getId(path) {
+  return path.split("/")[2];
 }
 
 function Sidebar({ user }) {
@@ -36,12 +44,10 @@ function Sidebar({ user }) {
         <IconHamburger />
       </button>
 
-      {/* #HACK - TODO: Fix hydration warning instead of ignoring */}
       <aside
         id="sidebar-multi-level-sidebar"
         className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar"
-        suppressHydrationWarning={true}
       >
         <a href="/">
           <img
@@ -53,15 +59,6 @@ function Sidebar({ user }) {
         </a>
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
-            <li>
-              <a
-                href="/patients/overview"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-              >
-                <IconPeople />
-                <span className="flex-1 ms-3 whitespace-nowrap">Patients</span>
-              </a>
-            </li>
             <li>
               <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white group">
                 <IconForms />
@@ -86,6 +83,7 @@ function Sidebar({ user }) {
             </li>
             <li>
               <a
+                href="#"
                 onClick={logout}
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
               >

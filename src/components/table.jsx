@@ -3,6 +3,9 @@ import { IconFilter, IconSort } from "@/components/ui/icons";
 import { Searchbar } from "@/components/ui/searchbar";
 
 function Body({ data }) {
+  if (!data || !data[0]) {
+    return;
+  }
   const keys = Object.keys(data[0]);
   const first = keys[0];
   return (
@@ -90,27 +93,14 @@ function Header({ columns, options }) {
 function HeaderRow({ column, first, options }) {
   return (
     <th scope="col" className="px-6 py-3">
-      <div className="flex items-center">
-        {column}
-        <button
-          id={`dropdownDefaultButton${column}`}
-          data-dropdown-toggle={`dropdown${column}`}
-        >
-          <IconFilter />
-        </button>
-        <DropdownMenu column={column} first={first} options={options} />
-      </div>
+      <div className="flex items-center">{column}</div>
     </th>
   );
 }
 
 function Status({ status }) {
   switch (status) {
-    case "pending":
-      return <>⏳ pending</>;
-    case "revoked":
-      return <>❌ revoked</>;
-    case "submitted":
+    case "active":
       return (
         <>
           ✅{" "}
@@ -118,10 +108,16 @@ function Status({ status }) {
             href="/patients/details/janedoe/intake"
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
-            submitted
+            view data
           </a>
         </>
       );
+    case "pending":
+      return <>⏳ pending</>;
+    case "refused":
+      return <>⛔ refused</>;
+    case "revoked":
+      return <>❌ revoked</>;
     default:
       return status;
   }
@@ -129,11 +125,7 @@ function Status({ status }) {
 
 function Table({ props, props: { columns, data, options } }) {
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <div className="flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between p-4">
-        <CustomizeDropdown props={props} />
-        <Searchbar />
-      </div>
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <Header columns={columns} options={options} />

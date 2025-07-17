@@ -1,4 +1,5 @@
 import "./globals.css";
+import Script from "next/script";
 import { Body } from "@/components/body";
 
 export const metadata = {
@@ -18,6 +19,10 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Body children={children} />
+        <Script
+          src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

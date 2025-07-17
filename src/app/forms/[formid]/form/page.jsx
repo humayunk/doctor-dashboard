@@ -7,6 +7,9 @@ export default function Page() {
   const { form } = JSON.parse(p) || props;
   return (
     <>
+      <article className="prose mb-4">
+        <h2 className="font-normal">{form.title}</h2>
+      </article>
       <Tabbar tabs={form.tabs} />
       <div className="m-4 ml-8">
         <div className="prose m-4 ml-8">

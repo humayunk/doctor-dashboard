@@ -24,22 +24,12 @@ const props = {
   },
   form: {
     buttonID: "formsDropdownCheckboxButton",
-    columns: ["Status", "Username", "Date", "Name", "Surname", "Date of Birth"],
-    data: [
-      {
-        status: "active",
-        username: "patientryan",
-        date: "7/16/2025, 5:39:56 PM",
-        name: "Don",
-        surname: "Otreply",
-        dob: "1969-06-11",
-      },
-    ],
+    columns: ["Status", "Patient Reference", "Submission Date"],
     menuID: "formsDropdownDefaultCheckbox",
     tabs: [
-      { label: "Data", href: "data" },
+      { label: "Patients", href: "data" },
       { label: "Form", href: "form" },
-      { label: "Send to Patient", href: "share" },
+      { label: "Invite Patient", href: "share" },
     ],
   },
   patient: {

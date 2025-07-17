@@ -14,7 +14,6 @@ const {
 export default function Page() {
   return (
     <>
-      <Tabbar tabs={tabs} />
       <div className="m-4 grid grid-cols-1 grid-rows-1 md:grid-cols-3">
         <Card info={fname} />
         <Card info={lname} />
