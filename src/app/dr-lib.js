@@ -84,6 +84,86 @@ function getAppManaging() {
   return appManaging;
 }
 
+async function getPatientsData(collector) {
+  const requestContent = collector.statusData.requestContent;
+  console.log("## collector requestContent", requestContent);
+  // static headers
+  const headers = {
+    status: "Status",
+    inviteName: "Invite",
+    username: "Username",
+    createdAt: "Date",
+  };
+  // headers from first form
+  const firstForm = Object.values(requestContent.app.data.forms)[0];
+  const itemDefs = [];
+  for (const itemKey of firstForm.itemKeys) {
+    const itemDef = model.itemsDefs.forKey(itemKey);
+    itemDefs.push(itemDef);
+    headers[itemDef.key] = l(itemDef.data.label);
+  }
+
+  // add lines (1 per patient)
+  const invites = await collector.getInvites();
+  const activeInvites = invites.filter((i) => i.status === "active");
+
+  // fetch patient data
+  const patientPromises = activeInvites.map((invite) =>
+    getPatientDetails(invite, itemDefs),
+  );
+  const patientsData = await Promise.all(patientPromises);
+  patientsData.sort((a, b) => b.dateCreation - a.dateCreation); // sort by creation date reverse
+  console.log("## patientsResults", patientsData);
+
+  return { headers, patientsData };
+}
+
+async function getPatientDetails(invite, itemDefs) {
+  const patient = {
+    invite,
+    status: invite.status,
+    username: null,
+    inviteName: invite.displayName,
+    createdAt: invite.dateCreation.toLocaleString(),
+    dateCreation: invite.dateCreation, // keep it as a date for sorting
+  };
+  console.log(
+    "## getPatientDetails.invite",
+    invite,
+    invite.status,
+    invite.eventData.streamIds,
+  );
+
+  // --
+  // const patientInfo = await invite.checkAndGetAccessInfo();
+  // if (patientInfo === null) return patient;
+  return patient;
+  patient.username = patientInfo.user.username;
+
+  // -- get data
+
+  // get the last value of each itemKey
+  const apiCalls = itemDefs.map((itemDef) => {
+    return {
+      method: "events.get",
+      params: {
+        streams: [itemDef.data.streamId],
+        types: itemDef.eventTypes,
+        limit: 1,
+      },
+    };
+  });
+
+  const profileEventsResults = await invite.connection.api(apiCalls);
+  for (const profileEventRes of profileEventsResults) {
+    const profileEvent = profileEventRes?.events?.[0];
+    if (!profileEvent) continue;
+    const field = dataFieldFromEvent(profileEvent);
+    patient[field.key] = field.value != null ? field.value : "";
+  }
+  return patient;
+}
+
 function hdsModel() {
   if (!model) {
     throw new Error("Initialize model with `initHDSModel()` first");
@@ -253,7 +333,13 @@ async function showQuestionnary(questionaryId) {
   props.form.requester = requestContent.requester.name;
   props.form.description = l(requestContent.description);
   props.form.title = l(requestContent.title);
-  console.log("*** form ***", props.form);
+
+  const { headers, patientsData } = await getPatientsData(collector);
+  props.form.columns = Object.entries(headers).map(([key, value]) => value);
+  // props.patientsData = patientsData;
+  console.log("## columns", props.form.columns);
+  console.log("## patientsData", patientsData);
+
   localStorage.setItem("props", JSON.stringify(props));
 }
 

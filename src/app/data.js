@@ -24,34 +24,23 @@ const props = {
   },
   form: {
     buttonID: "formsDropdownCheckboxButton",
-    columns: ["Display Name", "First Name", "Last Name", "DOB"],
-    consent: "This form requires read & write access to Profile data.",
+    columns: ["Status", "Username", "Date", "Name", "Surname", "Date of Birth"],
     data: [
-      { display: "Jane Doe", fname: "Jane", lname: "Doe", dob: "1990-01-19" },
-      { display: "Suzie Q", fname: "Suzie", lname: "Queue", dob: "1985-03-14" },
       {
-        display: "Lucy Smith",
-        fname: "Lucy",
-        lname: "Smith",
-        dob: "1994-12-03",
+        status: "active",
+        username: "patientryan",
+        date: "7/16/2025, 5:39:56 PM",
+        name: "Don",
+        surname: "Otreply",
+        dob: "1969-06-11",
       },
-      { display: "JD", fname: "John", lname: "Doe", dob: "1988-06-20" },
-    ],
-    description:
-      "This form comprises the initial intake questions before your first visit with Dr. Doe.",
-    forms: [
-      // { name: "Intake Form", href: "/forms/data", id: 1 },
-      // { name: "Endometriosis Survey", href: "#", id: 2 },
-      // { name: "Daily Cycle Entries", href: "#", id: 3 },
     ],
     menuID: "formsDropdownDefaultCheckbox",
-    requester: "Dr. Doe.",
     tabs: [
       { label: "Data", href: "data" },
       { label: "Form", href: "form" },
       { label: "Send to Patient", href: "share" },
     ],
-    title: "Intake Form",
   },
   patient: {
     buttonID: "patientsDropdownCheckboxButton",
