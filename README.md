@@ -12,7 +12,6 @@ Open [http://localhost:3000/](http://localhost:3000/) with your browser to see t
 
 ## Technology Choices
 
-- [daisyUI](https://daisyui.com/): component library
 - [ESLint](https://eslint.org/): linting
 - [Flowbite](https://flowbite.com/): aesthetically pleasing component development
 - [Inter](https://fonts.google.com/specimen/Inter): font
