@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+
 import { setQuestionnaries, showLoginButton } from "@/app/dr-lib.js";
 import { Sidebar } from "@/components/sidebar";
 
@@ -30,8 +31,8 @@ function Body({ children }) {
     return (
       <>
         <span
-          id="login-button"
           className="flex h-screen items-center justify-center"
+          id="login-button"
         ></span>
       </>
     );

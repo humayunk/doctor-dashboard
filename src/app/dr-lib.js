@@ -1,5 +1,6 @@
-import { props } from "@/app/data.js";
 import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
+
+import { props } from "@/app/data.js";
 
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
@@ -16,13 +17,14 @@ const serviceInfoUrl = "https://demo.datasafe.dev/reg/service/info";
 /** from common-data-defs.js */
 const v2 = {
   "questionary-x": {
-    title: "Demo with Profile and TTC-TTA 3",
-    permissionsPreRequest: [{ streamId: "profile" }, { streamId: "fertility" }],
     forms: {
+      history: {
+        itemKeys: ["fertility-ttc-tta", "body-weight"],
+        key: "recurring-x",
+        name: "History",
+        type: "recurring",
+      },
       profile: {
-        type: "permanent",
-        key: "profile-x",
-        name: "Profile",
         itemKeys: [
           "profile-name",
           "profile-surname",
@@ -30,29 +32,17 @@ const v2 = {
           "family-children-count",
           "fertility-miscarriages-count",
         ],
-      },
-      history: {
-        type: "recurring",
-        key: "recurring-x",
-        name: "History",
-        itemKeys: ["fertility-ttc-tta", "body-weight"],
+        key: "profile-x",
+        name: "Profile",
+        type: "permanent",
       },
     },
+    permissionsPreRequest: [{ streamId: "profile" }, { streamId: "fertility" }],
+    title: "Demo with Profile and TTC-TTA 3",
   },
   "questionnary-basic": {
-    title: "Basic Profile and Cycle Information 3",
-    permissionsPreRequest: [{ streamId: "profile" }],
     forms: {
-      profile: {
-        type: "permanent",
-        key: "profile-b",
-        name: "Profile",
-        itemKeys: ["profile-name", "profile-surname", "profile-date-of-birth"],
-      },
       history: {
-        type: "recurring",
-        key: "recurring-b",
-        name: "History",
         itemKeys: [
           "body-weight",
           "body-vulva-wetness-feeling",
@@ -61,8 +51,19 @@ const v2 = {
           "fertility-cycles-start",
           "fertility-cycles-ovulation",
         ],
+        key: "recurring-b",
+        name: "History",
+        type: "recurring",
+      },
+      profile: {
+        itemKeys: ["profile-name", "profile-surname", "profile-date-of-birth"],
+        key: "profile-b",
+        name: "Profile",
+        type: "permanent",
       },
     },
+    permissionsPreRequest: [{ streamId: "profile" }],
+    title: "Basic Profile and Cycle Information 3",
   },
 };
 
@@ -88,11 +89,11 @@ function dataFieldFromEvent(event) {
     return null;
   }
   const field = {
+    event: event,
     key: itemDef.key,
     label: itemDef.data.label.en,
     type: itemDef.data.type,
     value: event.content,
-    event: event,
   };
   if (field.type === "date") {
     const date = new Date(event.content);
@@ -111,6 +112,54 @@ function dataFieldFromEvent(event) {
  */
 function getAppManaging() {
   return appManaging;
+}
+
+/**
+ * get patients details
+ */
+async function getPatientDetails(invite, itemDefs) {
+  const patient = {
+    createdAt: invite.dateCreation.toLocaleString(),
+    dateCreation: invite.dateCreation, // keep it as a date for sorting
+    invite,
+    inviteName: invite.displayName,
+    status: invite.status,
+    username: null,
+  };
+  console.log(
+    "## getPatientDetails.invite",
+    invite,
+    invite.status,
+    invite.eventData.streamIds,
+  );
+
+  // --
+  const patientInfo = await invite.checkAndGetAccessInfo();
+  if (patientInfo === null) return patient;
+  patient.username = patientInfo.user.username;
+
+  // -- get data
+
+  // get the last value of each itemKey
+  const apiCalls = itemDefs.map((itemDef) => {
+    return {
+      method: "events.get",
+      params: {
+        limit: 1,
+        streams: [itemDef.data.streamId],
+        types: itemDef.eventTypes,
+      },
+    };
+  });
+
+  const profileEventsResults = await invite.connection.api(apiCalls);
+  for (const profileEventRes of profileEventsResults) {
+    const profileEvent = profileEventRes?.events?.[0];
+    if (!profileEvent) continue;
+    const field = dataFieldFromEvent(profileEvent);
+    patient[field.key] = field.value != null ? field.value : "";
+  }
+  return patient;
 }
 
 async function getPatients(collector) {
@@ -138,10 +187,10 @@ async function getPatientsData(collector) {
   console.log("## collector requestContent", requestContent);
   // static headers
   const headers = {
-    status: "Status",
-    inviteName: "Invite",
-    username: "Username",
     createdAt: "Date",
+    inviteName: "Invite",
+    status: "Status",
+    username: "Username",
   };
   // headers from first form
   const firstForm = Object.values(requestContent.app.data.forms)[0];
@@ -165,54 +214,6 @@ async function getPatientsData(collector) {
   console.log("## patientsResults", patientsData);
 
   return { headers, patientsData };
-}
-
-/**
- * get patients details
- */
-async function getPatientDetails(invite, itemDefs) {
-  const patient = {
-    invite,
-    status: invite.status,
-    username: null,
-    inviteName: invite.displayName,
-    createdAt: invite.dateCreation.toLocaleString(),
-    dateCreation: invite.dateCreation, // keep it as a date for sorting
-  };
-  console.log(
-    "## getPatientDetails.invite",
-    invite,
-    invite.status,
-    invite.eventData.streamIds,
-  );
-
-  // --
-  const patientInfo = await invite.checkAndGetAccessInfo();
-  if (patientInfo === null) return patient;
-  patient.username = patientInfo.user.username;
-
-  // -- get data
-
-  // get the last value of each itemKey
-  const apiCalls = itemDefs.map((itemDef) => {
-    return {
-      method: "events.get",
-      params: {
-        streams: [itemDef.data.streamId],
-        types: itemDef.eventTypes,
-        limit: 1,
-      },
-    };
-  });
-
-  const profileEventsResults = await invite.connection.api(apiCalls);
-  for (const profileEventRes of profileEventsResults) {
-    const profileEvent = profileEventRes?.events?.[0];
-    if (!profileEvent) continue;
-    const field = dataFieldFromEvent(profileEvent);
-    patient[field.key] = field.value != null ? field.value : "";
-  }
-  return patient;
 }
 
 function hdsModel() {
@@ -262,28 +263,28 @@ async function initDemoAccount(apiEndpoint) {
     });
 
     const requestContent = {
-      version: "0",
-      title: {
-        en: questionary.title,
-      },
-      requester: {
-        name: "Username " + drConnectionInfo.user.username,
-      },
-      description: {
-        en: "Short Description to be updated: " + questionary.title,
-      },
-      consent: {
-        en: "This is a consent message to be set",
-      },
-      permissions,
       app: {
-        id: "dr-form",
-        url: "https://xxx.yyy",
         data: {
           // will be used by patient app
           forms: questionary.forms,
         },
+        id: "dr-form",
+        url: "https://xxx.yyy",
       },
+      consent: {
+        en: "This is a consent message to be set",
+      },
+      description: {
+        en: "Short Description to be updated: " + questionary.title,
+      },
+      permissions,
+      requester: {
+        name: "Username " + drConnectionInfo.user.username,
+      },
+      title: {
+        en: questionary.title,
+      },
+      version: "0",
     };
     newCollector.statusData.requestContent = requestContent;
     await newCollector.save(); // save the data (done when the form is edited)
@@ -323,19 +324,13 @@ async function setQuestionnaries() {
 
 function showLoginButton(loginSpanId, stateChangeCallBack) {
   const authSettings = {
-    spanButtonID: loginSpanId, // div id the DOM that will be replaced by the Service specific button
-    onStateChange: pryvAuthStateChange, // event Listener for Authentication steps
     authRequest: {
-      // See: https://api.pryv.com/reference/#auth-request
-      requestingAppId: APP_MANAGING_STREAMID, // to customize for your own app
-      requestedPermissions: [
-        {
-          streamId: APP_MANAGING_STREAMID,
-          defaultName: APP_MANAGING_NAME,
-          level: "manage",
-        },
-      ],
       clientData: {
+        "app-web-auth:description": {
+          content:
+            "This app allows to send invitation links to patients and visualize and export answers.",
+          type: "note/txt",
+        },
         "app-web-auth:ensureBaseStreams": [
           // this is handled by custom app web Auth3 (might be migrated in permission request)
           { id: "applications", name: "Applications" },
@@ -345,13 +340,19 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
             parentId: "applications",
           },
         ],
-        "app-web-auth:description": {
-          type: "note/txt",
-          content:
-            "This app allows to send invitation links to patients and visualize and export answers.",
-        },
       },
+      requestedPermissions: [
+        {
+          defaultName: APP_MANAGING_NAME,
+          level: "manage",
+          streamId: APP_MANAGING_STREAMID,
+        },
+      ],
+      // See: https://api.pryv.com/reference/#auth-request
+      requestingAppId: APP_MANAGING_STREAMID, // to customize for your own app
     },
+    onStateChange: pryvAuthStateChange, // event Listener for Authentication steps
+    spanButtonID: loginSpanId, // div id the DOM that will be replaced by the Service specific button
   };
 
   pryv.Browser.setupAuth(authSettings, serviceInfoUrl);
@@ -387,10 +388,10 @@ async function showQuestionnary(questionaryId) {
 
   const patients = await getPatients(collector);
   props.form.data = patients.map((x) => ({
-    status: x.status,
-    reference: x.displayName || x.inviteName,
     date: x.dateCreation.toLocaleString(),
+    reference: x.displayName || x.inviteName,
     sharingLink: x.sharingLink,
+    status: x.status,
   }));
 
   localStorage.setItem("props", JSON.stringify(props));

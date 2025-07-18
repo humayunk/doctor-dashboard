@@ -1,10 +1,11 @@
 import "./globals.css";
 import Script from "next/script";
+
 import { Body } from "@/components/body";
 
 export const metadata = {
-  title: "Health Data Safe",
   description: "HDS Doctor Dashboard",
+  title: "Health Data Safe",
 };
 
 export default function RootLayout({ children }) {
@@ -12,8 +13,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link
-          rel="icon"
           href="https://healthdatasafe.github.io/style/images/Favicon/favicon.ico"
+          rel="icon"
           type="image/x-icon"
         />
       </head>

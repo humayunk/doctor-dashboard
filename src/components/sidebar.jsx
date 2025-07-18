@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+
 import { logout } from "@/app/dr-lib.js";
 import {
   IconForms,
@@ -16,7 +17,7 @@ function FormEntry({ href, name }) {
 
   return (
     <li key={name}>
-      <a href={href} className={classes}>
+      <a className={classes} href={href}>
         {name}
       </a>
     </li>
@@ -33,26 +34,26 @@ function Sidebar({ user }) {
   return (
     <>
       <button
+        aria-controls="sidebar-multi-level-sidebar"
+        className="ms-3 mt-2 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 focus:outline-none sm:hidden dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
         data-drawer-target="sidebar-multi-level-sidebar"
         data-drawer-toggle="sidebar-multi-level-sidebar"
-        aria-controls="sidebar-multi-level-sidebar"
         type="button"
-        className="ms-3 mt-2 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 focus:outline-none sm:hidden dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
       >
         <span className="sr-only">Open sidebar</span>
         <IconHamburger />
       </button>
 
       <aside
-        id="sidebar-multi-level-sidebar"
-        className="fixed top-0 left-0 z-40 h-screen w-64 -translate-x-full transition-transform sm:translate-x-0"
         aria-label="Sidebar"
+        className="fixed top-0 left-0 z-40 h-screen w-64 -translate-x-full transition-transform sm:translate-x-0"
+        id="sidebar-multi-level-sidebar"
       >
         <a href="/">
           <img
-            src="https://healthdatasafe.github.io/style/images/Horizontal/hds-logo-hz-1024x400-hz-color.png"
             alt="Logo"
             className="mx-2"
+            src="https://healthdatasafe.github.io/style/images/Horizontal/hds-logo-hz-1024x400-hz-color.png"
             width="200px"
           />
         </a>
@@ -65,16 +66,16 @@ function Sidebar({ user }) {
               </div>
             </li>
             {forms.map(({ href, id, name }) => (
-              <FormEntry key={id} href={href} name={name} />
+              <FormEntry href={href} key={id} name={name} />
             ))}
           </ul>
           <ul className="mt-4 space-y-2 border-t border-gray-200 pt-4 font-medium dark:border-gray-700">
             <li>
               <a
-                href="https://www.healthdatasafe.org/"
-                target="_blank"
-                rel="noreferrer"
                 className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                href="https://www.healthdatasafe.org/"
+                rel="noreferrer"
+                target="_blank"
               >
                 <IconLifesaver />
                 <span className="ms-3 flex-1 whitespace-nowrap">Help</span>
@@ -82,9 +83,9 @@ function Sidebar({ user }) {
             </li>
             <li>
               <a
+                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                 href="#"
                 onClick={logout}
-                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               >
                 <IconLogout />
                 <span className="ms-3 flex-1 whitespace-nowrap">

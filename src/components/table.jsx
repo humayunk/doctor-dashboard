@@ -7,7 +7,7 @@ function Body({ data }) {
   return (
     <tbody>
       {data.map((row) => (
-        <TableBody key={row[first]} first={first} keys={keys} row={row} />
+        <TableBody first={first} key={row[first]} keys={keys} row={row} />
       ))}
     </tbody>
   );
@@ -19,9 +19,9 @@ function Header({ columns, options }) {
       <tr>
         {columns.map((column) => (
           <HeaderRow
-            key={column}
             column={column}
             first={columns[0]}
+            key={column}
             options={options}
           />
         ))}
@@ -32,7 +32,7 @@ function Header({ columns, options }) {
 
 function HeaderRow({ column, first, options }) {
   return (
-    <th scope="col" className="px-6 py-3">
+    <th className="px-6 py-3" scope="col">
       <div className="flex items-center">{column}</div>
     </th>
   );
@@ -54,17 +54,17 @@ function Table({ props, props: { columns, data, options } }) {
 function TableBody({ first, keys, row }) {
   return (
     <tr
-      key={row[first]}
       className="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+      key={row[first]}
     >
       <th
-        scope="row"
         className="px-6 py-4 font-medium whitespace-nowrap text-gray-900 dark:text-white"
+        scope="row"
       >
         {row[first]}
       </th>
       {keys.slice(1).map((key) => (
-        <TableData key={key} item={key} row={row} />
+        <TableData item={key} key={key} row={row} />
       ))}
     </tr>
   );

@@ -7,17 +7,17 @@ const props = {
       { date: "2025-01-03", temperature: 36.2, weight: 74.8 },
     ],
     info: {
+      dob: { label: "DOB", value: "1991-01-19" },
       fname: { label: "First Name", value: "Jane" },
       lname: { label: "Last Name", value: "Doe" },
-      dob: { label: "DOB", value: "1991-01-19" },
     },
   },
   form: {
     tabs: [
-      { label: "Patients", href: "patients" },
-      { label: "Form Details", href: "details" },
-      { label: "Section: Profile", href: "profile" },
-      { label: "Section: History", href: "history" },
+      { href: "patients", label: "Patients" },
+      { href: "details", label: "Form Details" },
+      { href: "profile", label: "Section: Profile" },
+      { href: "history", label: "Section: History" },
     ],
   },
 };

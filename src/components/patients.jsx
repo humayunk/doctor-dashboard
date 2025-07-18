@@ -5,7 +5,7 @@ function Actions({ row }) {
     "font-medium text-blue-600 dark:text-blue-500 hover:underline";
   if (!row.sharingLink) {
     return (
-      <a href="/patients/details/janedoe/intake" className={classes}>
+      <a className={classes} href="/patients/details/janedoe/intake">
         👀 view data
       </a>
     );
@@ -17,14 +17,14 @@ function Actions({ row }) {
     const href = `mailto:?subject=Invitation&body=${encodeURIComponent(body)}`;
     return (
       <span>
-        <a href={href} className={classes}>
+        <a className={classes} href={href}>
           ✉️ Send by email
         </a>{" "}
         |{" "}
         <a
+          className={classes}
           href="#"
           onClick={() => handleClick(row.sharingLink)}
-          className={classes}
         >
           ️📝 Copy link to clipboard
         </a>
@@ -56,7 +56,7 @@ function Header() {
     <thead className="bg-gray-50 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
       <tr>
         {columns.map((column) => (
-          <th key={column} scope="col" className="px-6 py-3">
+          <th className="px-6 py-3" key={column} scope="col">
             <div className="flex items-center">{column}</div>
           </th>
         ))}
@@ -96,12 +96,12 @@ function Status({ status }) {
 function TableBody({ row }) {
   return (
     <tr
-      key={row.reference}
       className="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+      key={row.reference}
     >
       <th
-        scope="row"
         className="px-6 py-4 font-medium whitespace-nowrap text-gray-900 dark:text-white"
+        scope="row"
       >
         <Status status={row.status} />
       </th>
