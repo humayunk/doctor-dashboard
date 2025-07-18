@@ -113,6 +113,26 @@ function getAppManaging() {
   return appManaging;
 }
 
+async function getPatients(collector) {
+  // check inbox for new incoming accepted requests
+  const newCollectorInvites = await collector.checkInbox();
+  console.log("## refreshInviteList inbox ", newCollectorInvites);
+
+  // get all patients
+  const patients = await collector.getInvites();
+  patients.sort((a, b) => b.dateCreation - a.dateCreation); // sort by creation date reverse
+  for (const patient of patients) {
+    if (patient.status === "pending") {
+      const inviteSharingData = await patient.getSharingData();
+      const patientURL = "https://whatever.backloop.dev:4443/patient.html";
+      patient.sharingLink = `${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`;
+    }
+  }
+  console.log("## getPatients patients ", patients);
+
+  return patients;
+}
+
 async function getPatientsData(collector) {
   const requestContent = collector.statusData.requestContent;
   console.log("## collector requestContent", requestContent);
@@ -210,7 +230,7 @@ function hdsModel() {
 async function initDemoAccount(apiEndpoint) {
   drConnection = await connectAPIEndpoint(apiEndpoint);
   const drConnectionInfo = await drConnection.accessInfo();
-  console.log("*** initDemoAccount - drConnectionInfo ***", drConnectionInfo);
+  console.log("## initDemoAccount - drConnectionInfo", drConnectionInfo);
   localStorage.setItem("user", drConnectionInfo.user.username);
   appManaging = await appTemplates.AppManagingAccount.newFromConnection(
     APP_MANAGING_STREAMID,
@@ -223,10 +243,10 @@ async function initDemoAccount(apiEndpoint) {
     // check if collector exists
     const found = collectors.find((c) => c.name === questionary.title);
     if (found) {
-      console.log("*** initDemoAccount found ***", found);
+      console.log("## initDemoAccount found", found);
       continue; // stop here if exists
     }
-    console.log("*** initDemoAccount creating collector for ***", questionary);
+    console.log("## initDemoAccount creating collector for", questionary);
     const newCollector = await appManaging.createCollector(questionary.title);
 
     // create the request content
@@ -268,9 +288,9 @@ async function initDemoAccount(apiEndpoint) {
     newCollector.statusData.requestContent = requestContent;
     await newCollector.save(); // save the data (done when the form is edited)
     await newCollector.publish();
-    console.log("*** initDemoAccount published ***", newCollector);
+    console.log("## initDemoAccount published", newCollector);
   }
-  console.log("*** initDemoAccount with ***", collectors);
+  console.log("## initDemoAccount with", collectors);
 }
 
 async function initHDSModel() {
@@ -278,7 +298,7 @@ async function initHDSModel() {
     const service = new pryv.Service(serviceInfoUrl);
     const serviceInfo = await service.info();
     model = new HDSModel(serviceInfo.assets["hds-model"]);
-    console.log("*** model ***", model);
+    console.log("## model", model);
     await model.load();
   }
   return model;
@@ -293,7 +313,7 @@ async function setQuestionnaries() {
   const appManaging = getAppManaging();
   const collectors = await appManaging.getCollectors();
   props.form.forms = collectors.map((c) => ({
-    href: `/forms/${c.id}/data`,
+    href: `/forms/${c.id}/patients`,
     id: c.id,
     name: c.name,
   }));
@@ -338,7 +358,7 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
 
   async function pryvAuthStateChange(state) {
     // called each time the authentication state changes
-    console.log("*** pryvAuthStateChange ***", state);
+    console.log("## pryvAuthStateChange", state);
     if (state.id === pryv.Browser.AuthStates.AUTHORIZED) {
       await initDemoAccount(state.apiEndpoint);
       stateChangeCallBack("loggedIN");
@@ -365,11 +385,12 @@ async function showQuestionnary(questionaryId) {
   props.form.description = l(requestContent.description);
   props.form.title = l(requestContent.title);
 
-  const { headers, patientsData } = await getPatientsData(collector);
-  props.form.data = patientsData.map((x) => ({
+  const patients = await getPatients(collector);
+  props.form.data = patients.map((x) => ({
     status: x.status,
-    reference: x.inviteName,
-    date: x.createdAt,
+    reference: x.displayName || x.inviteName,
+    date: x.dateCreation.toLocaleString(),
+    sharingLink: x.sharingLink,
   }));
 
   localStorage.setItem("props", JSON.stringify(props));

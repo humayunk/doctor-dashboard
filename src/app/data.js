@@ -27,9 +27,10 @@ const props = {
     columns: ["Status", "Patient Reference", "Submission Date"],
     menuID: "formsDropdownDefaultCheckbox",
     tabs: [
-      { label: "Patients", href: "data" },
-      { label: "Form", href: "form" },
-      { label: "Invite Patient", href: "share" },
+      { label: "Patients", href: "patients" },
+      { label: "Form Details", href: "details" },
+      { label: "Section: Profile", href: "profile" },
+      { label: "Section: History", href: "history" },
     ],
   },
   patient: {
