@@ -30,7 +30,7 @@ function Header({ columns, options }) {
   );
 }
 
-function HeaderRow({ column, first, options }) {
+function HeaderRow({ column }) {
   return (
     <th className="px-6 py-3" scope="col">
       <div className="flex items-center">{column}</div>
@@ -38,7 +38,7 @@ function HeaderRow({ column, first, options }) {
   );
 }
 
-function Table({ props, props: { columns, data, options } }) {
+function Table({ props: { columns, data, options } }) {
   return (
     <div className="relative my-4 overflow-x-auto shadow-md sm:rounded-lg">
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

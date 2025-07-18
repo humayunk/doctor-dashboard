@@ -79,87 +79,10 @@ async function connectAPIEndpoint(apiEndpoint) {
 }
 
 /**
- * Link an event to a data field from form
- * @param {*} event
- */
-function dataFieldFromEvent(event) {
-  const itemDef = model.itemsDefs.forEvent(event, false);
-  if (!itemDef) {
-    console.error("## itemDef not found for event", event);
-    return null;
-  }
-  const field = {
-    event: event,
-    key: itemDef.key,
-    label: itemDef.data.label.en,
-    type: itemDef.data.type,
-    value: event.content,
-  };
-  if (field.type === "date") {
-    const date = new Date(event.content);
-    if (!isNaN(date)) {
-      field.value = date.toISOString().split("T")[0]; // format YYYY-MM-DD
-    } else {
-      console.error("## Error parsing date", event.content);
-      field.value = "";
-    }
-  }
-  return field;
-}
-
-/**
  * exposes appManaging for the app
  */
 function getAppManaging() {
   return appManaging;
-}
-
-/**
- * get patients details
- */
-async function getPatientDetails(invite, itemDefs) {
-  const patient = {
-    createdAt: invite.dateCreation.toLocaleString(),
-    dateCreation: invite.dateCreation, // keep it as a date for sorting
-    invite,
-    inviteName: invite.displayName,
-    status: invite.status,
-    username: null,
-  };
-  console.log(
-    "## getPatientDetails.invite",
-    invite,
-    invite.status,
-    invite.eventData.streamIds,
-  );
-
-  // --
-  const patientInfo = await invite.checkAndGetAccessInfo();
-  if (patientInfo === null) return patient;
-  patient.username = patientInfo.user.username;
-
-  // -- get data
-
-  // get the last value of each itemKey
-  const apiCalls = itemDefs.map((itemDef) => {
-    return {
-      method: "events.get",
-      params: {
-        limit: 1,
-        streams: [itemDef.data.streamId],
-        types: itemDef.eventTypes,
-      },
-    };
-  });
-
-  const profileEventsResults = await invite.connection.api(apiCalls);
-  for (const profileEventRes of profileEventsResults) {
-    const profileEvent = profileEventRes?.events?.[0];
-    if (!profileEvent) continue;
-    const field = dataFieldFromEvent(profileEvent);
-    patient[field.key] = field.value != null ? field.value : "";
-  }
-  return patient;
 }
 
 async function getPatients(collector) {
@@ -180,40 +103,6 @@ async function getPatients(collector) {
   console.log("## getPatients patients ", patients);
 
   return patients;
-}
-
-async function getPatientsData(collector) {
-  const requestContent = collector.statusData.requestContent;
-  console.log("## collector requestContent", requestContent);
-  // static headers
-  const headers = {
-    createdAt: "Date",
-    inviteName: "Invite",
-    status: "Status",
-    username: "Username",
-  };
-  // headers from first form
-  const firstForm = Object.values(requestContent.app.data.forms)[0];
-  const itemDefs = [];
-  for (const itemKey of firstForm.itemKeys) {
-    const itemDef = model.itemsDefs.forKey(itemKey);
-    itemDefs.push(itemDef);
-    headers[itemDef.key] = l(itemDef.data.label);
-  }
-
-  // add lines (1 per patient)
-  const invites = await collector.getInvites();
-  const activeInvites = invites.filter((i) => i.status === "active");
-
-  // fetch patient data
-  const patientPromises = activeInvites.map((invite) =>
-    getPatientDetails(invite, itemDefs),
-  );
-  const patientsData = await Promise.all(patientPromises);
-  patientsData.sort((a, b) => b.dateCreation - a.dateCreation); // sort by creation date reverse
-  console.log("## patientsResults", patientsData);
-
-  return { headers, patientsData };
 }
 
 function hdsModel() {
@@ -244,7 +133,7 @@ async function initDemoAccount(apiEndpoint) {
     // check if collector exists
     const found = collectors.find((c) => c.name === questionary.title);
     if (found) {
-      console.log("## initDemoAccount found", found);
+      console.log("## initDemoAccount found", questionaryId, found);
       continue; // stop here if exists
     }
     console.log("## initDemoAccount creating collector for", questionary);

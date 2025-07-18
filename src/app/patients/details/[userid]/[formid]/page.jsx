@@ -1,13 +1,11 @@
 import { props } from "@/app/data.js";
 import { Table } from "@/components/table";
 import { Card } from "@/components/ui/card";
-import { Tabbar } from "@/components/ui/tabbar";
 
 const {
   details,
   details: {
     info: { dob, fname, lname },
-    tabs,
   },
 } = props;
 
