@@ -31,7 +31,7 @@ function Body({ children }) {
       <>
         <span
           id="login-button"
-          className="h-screen flex justify-center items-center"
+          className="flex h-screen items-center justify-center"
         ></span>
       </>
     );

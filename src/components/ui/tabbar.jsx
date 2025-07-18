@@ -21,7 +21,7 @@ function Tab({ href, label }) {
 
 function Tabbar({ tabs }) {
   return (
-    <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400">
+    <ul className="flex flex-wrap border-b border-gray-200 text-center text-sm font-medium text-gray-500 dark:border-gray-700 dark:text-gray-400">
       {tabs.map(({ href, label }) => (
         <li key={label} className="me-2">
           <Tab href={href} label={label} />

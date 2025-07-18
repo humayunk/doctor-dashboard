@@ -37,7 +37,7 @@ function Sidebar({ user }) {
         data-drawer-toggle="sidebar-multi-level-sidebar"
         aria-controls="sidebar-multi-level-sidebar"
         type="button"
-        className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+        className="ms-3 mt-2 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:ring-2 focus:ring-gray-200 focus:outline-none sm:hidden dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
       >
         <span className="sr-only">Open sidebar</span>
         <IconHamburger />
@@ -45,7 +45,7 @@ function Sidebar({ user }) {
 
       <aside
         id="sidebar-multi-level-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+        className="fixed top-0 left-0 z-40 h-screen w-64 -translate-x-full transition-transform sm:translate-x-0"
         aria-label="Sidebar"
       >
         <a href="/">
@@ -56,38 +56,38 @@ function Sidebar({ user }) {
             width="200px"
           />
         </a>
-        <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+        <div className="h-full overflow-y-auto bg-gray-50 px-3 py-4 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
             <li>
-              <div className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white group">
+              <div className="group flex items-center rounded-lg p-2 text-gray-900 dark:text-white">
                 <IconForms />
-                <span className="flex-1 ms-3 whitespace-nowrap">Forms</span>
+                <span className="ms-3 flex-1 whitespace-nowrap">Forms</span>
               </div>
             </li>
             {forms.map(({ href, id, name }) => (
               <FormEntry key={id} href={href} name={name} />
             ))}
           </ul>
-          <ul className="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
+          <ul className="mt-4 space-y-2 border-t border-gray-200 pt-4 font-medium dark:border-gray-700">
             <li>
               <a
                 href="https://www.healthdatasafe.org/"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               >
                 <IconLifesaver />
-                <span className="flex-1 ms-3 whitespace-nowrap">Help</span>
+                <span className="ms-3 flex-1 whitespace-nowrap">Help</span>
               </a>
             </li>
             <li>
               <a
                 href="#"
                 onClick={logout}
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               >
                 <IconLogout />
-                <span className="flex-1 ms-3 whitespace-nowrap">
+                <span className="ms-3 flex-1 whitespace-nowrap">
                   {user}: Log Out
                 </span>
               </a>

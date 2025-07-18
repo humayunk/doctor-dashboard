@@ -1,7 +1,7 @@
 function IconForms() {
   return (
     <svg
-      className="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400"
+      className="h-5 w-5 shrink-0 text-gray-500 transition duration-75 dark:text-gray-400"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -17,7 +17,7 @@ function IconForms() {
 function IconHamburger() {
   return (
     <svg
-      className="w-6 h-6"
+      className="h-6 w-6"
       aria-hidden="true"
       fill="currentColor"
       viewBox="0 0 20 20"
@@ -35,7 +35,7 @@ function IconHamburger() {
 function IconLifesaver() {
   return (
     <svg
-      className="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+      className="h-5 w-5 shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="currentColor"
@@ -49,7 +49,7 @@ function IconLifesaver() {
 function IconLogout() {
   return (
     <svg
-      className="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+      className="h-5 w-5 shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"

@@ -12,7 +12,7 @@ export default function Page() {
       </article>
       <Tabbar tabs={form.tabs} />
       <div className="m-4 ml-8">
-        <div className="prose m-4 ml-8">
+        <div className="m-4 prose ml-8">
           <h2 className="font-normal">Description</h2>
           <p>{form.description}</p>
           <h2 className="font-normal">Consent</h2>
