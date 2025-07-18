@@ -6,7 +6,6 @@ import {
   IconHamburger,
   IconLifesaver,
   IconLogout,
-  IconPeople,
 } from "@/components/ui/icons";
 
 function FormEntry({ href, name }) {
@@ -100,11 +99,4 @@ function Sidebar({ user }) {
   );
 }
 
-export {
-  IconForms,
-  IconHamburger,
-  IconLifesaver,
-  IconLogout,
-  IconPeople,
-  Sidebar,
-};
+export { Sidebar };

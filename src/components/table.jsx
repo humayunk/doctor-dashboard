@@ -1,7 +1,3 @@
-import { CustomizeDropdown } from "@/components/ui/dropdown";
-import { IconFilter, IconSort } from "@/components/ui/icons";
-import { Searchbar } from "@/components/ui/searchbar";
-
 function Body({ data }) {
   if (!data || !data[0]) {
     return;
@@ -14,62 +10,6 @@ function Body({ data }) {
         <TableBody key={row[first]} first={first} keys={keys} row={row} />
       ))}
     </tbody>
-  );
-}
-
-function DropdownMenu({ column, first, options }) {
-  return (
-    <div
-      id={`dropdown${column}`}
-      className="normal-case z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600"
-    >
-      <ul className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200">
-        <li>
-          <a href="#">
-            <IconSort />
-          </a>
-        </li>
-      </ul>
-      <Filter options={column !== first ? options : null} />
-    </div>
-  );
-}
-
-function Filter({ options }) {
-  if (!options) {
-    return null;
-  }
-  return (
-    <ul
-      className="p-3 space-y-3 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="dropdownCheckboxButton"
-    >
-      {options.map((option) => (
-        <FilterOption key={option} option={option} />
-      ))}
-    </ul>
-  );
-}
-
-function FilterOption({ option }) {
-  return (
-    <li>
-      <div className="flex items-center">
-        <input
-          defaultChecked
-          id="checkbox-item-1"
-          type="checkbox"
-          value=""
-          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-        />
-        <label
-          htmlFor="checkbox-item-1"
-          className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-        >
-          {option}
-        </label>
-      </div>
-    </li>
   );
 }
 
@@ -98,31 +38,6 @@ function HeaderRow({ column, first, options }) {
   );
 }
 
-function Status({ status }) {
-  switch (status) {
-    case "active":
-      return (
-        <>
-          ✅{" "}
-          <a
-            href="/patients/details/janedoe/intake"
-            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-          >
-            view data
-          </a>
-        </>
-      );
-    case "pending":
-      return <>⏳ pending</>;
-    case "refused":
-      return <>⛔ refused</>;
-    case "revoked":
-      return <>❌ revoked</>;
-    default:
-      return status;
-  }
-}
-
 function Table({ props, props: { columns, data, options } }) {
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg my-4">
@@ -146,7 +61,7 @@ function TableBody({ first, keys, row }) {
         scope="row"
         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
       >
-        <Status status={row[first]} />
+        {row[first]}
       </th>
       {keys.slice(1).map((key) => (
         <TableData key={key} item={key} row={row} />
@@ -156,11 +71,7 @@ function TableBody({ first, keys, row }) {
 }
 
 function TableData({ item, row }) {
-  return (
-    <td className="px-6 py-4">
-      <Status status={row[item]} />
-    </td>
-  );
+  return <td className="px-6 py-4">{row[item]}</td>;
 }
 
 export { Table };

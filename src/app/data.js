@@ -1,6 +1,5 @@
 const props = {
   details: {
-    buttonID: "detailsDropdownCheckboxButton",
     columns: ["Date", "Temperature (C)", "Weight (Kg)"],
     data: [
       { date: "2025-01-01", temperature: 36.0, weight: 75.0 },
@@ -12,53 +11,14 @@ const props = {
       lname: { label: "Last Name", value: "Doe" },
       dob: { label: "DOB", value: "1991-01-19" },
     },
-    menuID: "detailsDropdownDefaultCheckbox",
-    tabs: [
-      { label: "Intake Form", href: "/patients/details/janedoe/intake" },
-      {
-        label: "Endometriosis Survey",
-        href: "/patients/details/janedoe/endometriosis",
-      },
-      { label: "Daily Cycle Entries", href: "/patients/details/janedoe/cycle" },
-    ],
   },
   form: {
-    buttonID: "formsDropdownCheckboxButton",
-    columns: ["Status", "Patient Reference", "Submission Date"],
-    menuID: "formsDropdownDefaultCheckbox",
     tabs: [
       { label: "Patients", href: "patients" },
       { label: "Form Details", href: "details" },
       { label: "Section: Profile", href: "profile" },
       { label: "Section: History", href: "history" },
     ],
-  },
-  patient: {
-    buttonID: "patientsDropdownCheckboxButton",
-    columns: [
-      "Display Name",
-      "Intake Form",
-      "Endometriosis Survey",
-      "Daily Cycle Entries",
-    ],
-    data: [
-      {
-        display: "Jane Doe",
-        intake: "submitted",
-        endo: "submitted",
-        cycle: "",
-      },
-      { display: "Suzie Q", intake: "pending", endo: "", cycle: "" },
-      {
-        display: "Lucy Smith",
-        intake: "submitted",
-        endo: "revoked",
-        cycle: "",
-      },
-      { display: "JD", intake: "", endo: "", cycle: "" },
-    ],
-    menuID: "patientsDropdownDefaultCheckbox",
-    options: ["[Blank]", "Pending", "Submitted", "Revoked"],
   },
 };
 
