@@ -273,6 +273,10 @@ async function showQuestionnary(questionaryId) {
   props.form.consent = l(requestContent.consent);
   props.form.requester = requestContent.requester.name;
   props.form.description = l(requestContent.description);
+  props.form.permissions = {};
+  props.form.permissions.read = requestContent.permissions
+    .filter((p) => p.level === "read")
+    .map((p) => p.defaultName);
   props.form.title = l(requestContent.title);
 
   const patients = await getPatients(collector);

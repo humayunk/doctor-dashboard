@@ -24,13 +24,9 @@ export default function Page() {
           <h3 className="italic">Read</h3>
           <p>You will be able to read the following data points:</p>
           <ul>
-            <li>Profile</li>
-            <li>Body Weight</li>
-            <li>Vulva Wetness Feeling</li>
-            <li>Vulva Mucus Inspect</li>
-            <li>Vulva Mucus Stretch</li>
-            <li>New Cycle</li>
-            <li>Ovulation Day</li>
+            {form.permissions.read.map((permission) => (
+              <li key={permission}>{permission}</li>
+            ))}
           </ul>
         </div>
       </div>
