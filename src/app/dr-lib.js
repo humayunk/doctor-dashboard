@@ -1,6 +1,7 @@
 import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
 
 import { props } from "@/app/data.js";
+props.form = {};
 
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
@@ -286,6 +287,28 @@ async function showQuestionnary(questionaryId) {
     sharingLink: x.sharingLink,
     status: x.status,
   }));
+
+  let tabs = [
+    { href: "patients", label: "Patients" },
+    { href: "details", label: "Form Details" },
+  ];
+
+  const keyTitles = { type: "Type", name: "Name", itemKeys: "ItemKeys" };
+  const forms = Object.values(requestContent.app.data.forms);
+  console.log("## forms", forms);
+  for (const [key, title] of Object.entries(keyTitles)) {
+    for (const form of forms) {
+      let content = form[key];
+      if (key === "name") {
+        tabs.push({
+          href: `section-${form.key}`,
+          label: `Section: ${content}`,
+        });
+      }
+    }
+  }
+
+  props.form.tabs = tabs;
 
   localStorage.setItem("props", JSON.stringify(props));
 }

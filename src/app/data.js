@@ -12,14 +12,6 @@ const props = {
       lname: { label: "Last Name", value: "Doe" },
     },
   },
-  form: {
-    tabs: [
-      { href: "patients", label: "Patients" },
-      { href: "details", label: "Form Details" },
-      { href: "profile", label: "Section: Profile" },
-      { href: "history", label: "Section: History" },
-    ],
-  },
 };
 
 export { props };
