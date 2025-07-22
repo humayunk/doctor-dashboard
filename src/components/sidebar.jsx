@@ -29,8 +29,11 @@ function getId(path) {
 }
 
 function Sidebar({ user }) {
-  const props = JSON.parse(localStorage.getItem("props"));
-  const forms = props.form.forms;
+  const props = JSON.parse(localStorage.getItem("props")) || {};
+  if (!props.forms) {
+    props.forms = { summary: [] };
+  }
+  const forms = props.forms.summary;
   return (
     <>
       <button

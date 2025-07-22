@@ -1,7 +1,7 @@
 import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
 
 import { props } from "@/app/data.js";
-props.form = {};
+props.forms = { summary: [] };
 
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
@@ -89,7 +89,7 @@ function getAppManaging() {
 async function getPatients(collector) {
   // check inbox for new incoming accepted requests
   const newCollectorInvites = await collector.checkInbox();
-  console.log("## refreshInviteList inbox ", newCollectorInvites);
+  console.log("## getPatients inbox ", newCollectorInvites);
 
   // get all patients
   const patients = await collector.getInvites();
@@ -203,12 +203,14 @@ function logout() {
 async function setQuestionnaries() {
   const appManaging = getAppManaging();
   const collectors = await appManaging.getCollectors();
-  props.form.forms = collectors.map((c) => ({
-    href: `/forms/${c.id}/patients`,
-    id: c.id,
-    name: c.name,
-  }));
-  console.log("## forms", props.form.forms);
+  for (const collector of collectors) {
+    props.forms.summary.push({
+      href: `/forms/${collector.id}/patients`,
+      id: collector.id,
+      name: collector.name,
+    });
+    await showQuestionnary(collector.id);
+  }
   localStorage.setItem("props", JSON.stringify(props));
 }
 
@@ -253,7 +255,6 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
     if (state.id === pryv.Browser.AuthStates.AUTHORIZED) {
       await initDemoAccount(state.apiEndpoint);
       stateChangeCallBack("loggedIN");
-      showQuestionnary("app-dr-hds-nhsns8v");
     }
     if (state.id === pryv.Browser.AuthStates.INITIALIZED) {
       drConnection = null;
@@ -264,24 +265,24 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
 }
 
 async function showQuestionnary(questionaryId) {
-  console.log("## showQuestionnaryId", questionaryId);
+  const form = (props.forms[questionaryId] = {});
 
   const appManaging = getAppManaging();
   const collector = await appManaging.getCollectorById(questionaryId);
   await collector.init(); // load controller data only when needed
   // show details
   const { requestContent } = collector.statusData;
-  props.form.consent = l(requestContent.consent);
-  props.form.requester = requestContent.requester.name;
-  props.form.description = l(requestContent.description);
-  props.form.permissions = {};
-  props.form.permissions.read = requestContent.permissions
+  form.consent = l(requestContent.consent);
+  form.requester = requestContent.requester.name;
+  form.description = l(requestContent.description);
+  form.permissions = {};
+  form.permissions.read = requestContent.permissions
     .filter((p) => p.level === "read")
     .map((p) => p.defaultName);
-  props.form.title = l(requestContent.title);
+  form.title = l(requestContent.title);
 
   const patients = await getPatients(collector);
-  props.form.data = patients.map((x) => ({
+  form.data = patients.map((x) => ({
     date: x.dateCreation.toLocaleString(),
     reference: x.displayName || x.inviteName,
     sharingLink: x.sharingLink,
@@ -293,24 +294,35 @@ async function showQuestionnary(questionaryId) {
     { href: "details", label: "Form Details" },
   ];
 
-  const keyTitles = { type: "Type", name: "Name", itemKeys: "ItemKeys" };
+  const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
   const forms = Object.values(requestContent.app.data.forms);
-  console.log("## forms", forms);
   for (const [key, title] of Object.entries(keyTitles)) {
-    for (const form of forms) {
-      let content = form[key];
-      if (key === "name") {
+    console.log("## keyTitles", title);
+    for (const f of forms) {
+      const id = f.key;
+      const title = f.name;
+      if (key === "itemKeys") {
+        form[id] = { title: title, type: f.type };
+        form[id].itemDefs = f.itemKeys.map((itemKey) => {
+          const itemDef = model.itemsDefs.forKey(itemKey);
+          return itemDef.data;
+        });
+      } else if (key === "name") {
         tabs.push({
-          href: `section-${form.key}`,
-          label: `Section: ${content}`,
+          href: `section-${id}`,
+          label: `Section: ${title}`,
         });
       }
     }
   }
 
-  props.form.tabs = tabs;
-
-  localStorage.setItem("props", JSON.stringify(props));
+  form.tabs = tabs;
 }
 
-export { logout, setQuestionnaries, showLoginButton, showQuestionnary };
+export {
+  createSharingLink,
+  logout,
+  setQuestionnaries,
+  showLoginButton,
+  showQuestionnary,
+};

@@ -1,10 +1,13 @@
 "use client";
-import { props } from "@/app/data.js";
+import { usePathname } from "next/navigation";
+
 import { Tabbar } from "@/components/ui/tabbar";
 
 export default function Page() {
   const p = localStorage.getItem("props");
-  const { form } = JSON.parse(p) || props;
+  const { forms } = JSON.parse(p) || {};
+  const formId = usePathname().split("/")[2];
+  const form = forms[formId];
   return (
     <>
       <article className="prose mb-4">
