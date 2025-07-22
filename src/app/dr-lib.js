@@ -201,8 +201,8 @@ function logout() {
 }
 
 async function setQuestionnaries() {
-  const appManaging = getAppManaging();
-  const collectors = await appManaging.getCollectors();
+  const am = getAppManaging();
+  const collectors = await am.getCollectors();
   for (const collector of collectors) {
     props.forms.summary.push({
       href: `/forms/${collector.id}/patients`,
@@ -267,8 +267,8 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
 async function showQuestionnary(questionaryId) {
   const form = (props.forms[questionaryId] = {});
 
-  const appManaging = getAppManaging();
-  const collector = await appManaging.getCollectorById(questionaryId);
+  const am = getAppManaging();
+  const collector = await am.getCollectorById(questionaryId);
   await collector.init(); // load controller data only when needed
   // show details
   const { requestContent } = collector.statusData;
