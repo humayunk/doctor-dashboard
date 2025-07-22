@@ -329,7 +329,7 @@ async function showPatientDetails(collectorId, inviteKey) {
 
   const lines = await getPatientData(invite);
   props[inviteKey] = { columns: ["Date", "Label", "Value"] };
-  props[inviteKey].data = Object.entries(lines).map(([k, v]) => ({
+  props[inviteKey].data = Object.entries(lines).map(([, v]) => ({
     date: v.time,
     label: v.formLabel,
     value: (v.description || v.value).replace(/"/g, ""),
@@ -371,8 +371,7 @@ async function showQuestionnary(questionaryId) {
 
   const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
   const forms = Object.values(requestContent.app.data.forms);
-  for (const [key, title] of Object.entries(keyTitles)) {
-    console.log("## keyTitles", title);
+  for (const [key] of Object.entries(keyTitles)) {
     for (const f of forms) {
       const id = f.key;
       const title = f.name;
