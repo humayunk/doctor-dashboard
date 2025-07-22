@@ -90,6 +90,7 @@ function getLineForEvent(event) {
     description: "",
     formLabel: "Unknown",
     formType: "Unknown",
+    repeatable: "any",
     streamAndType: event.streamId + " - " + event.type,
     time: new Date(event.time * 1000).toISOString(),
     value: JSON.stringify(event.content),
@@ -101,6 +102,7 @@ function getLineForEvent(event) {
     line.eventType = event.type;
     line.formLabel = itemDef.label;
     line.formType = itemDef.data.type;
+    line.repeatable = itemDef.data.repeatable;
     if (line.formType === "date") {
       line.value = new Date(event.time * 1000).toISOString().split("T")[0];
     }
@@ -115,7 +117,7 @@ function getLineForEvent(event) {
     }
     if (line.formType === "checkbox") {
       if (event.type === "activity/plain") {
-        line.description = "X";
+        line.description = "Yes";
         line.value = "x";
       }
     }
@@ -145,10 +147,12 @@ async function getPatients(collector) {
 
   // get all patients
   const patients = await collector.getInvites();
+  const activePatients = [];
   patients.sort((a, b) => b.dateCreation - a.dateCreation); // sort by creation date reverse
   for (const patient of patients) {
     if (patient.status === "active") {
       patient.viewLink = `/patients/${collector.streamId}/${patient.key}`;
+      activePatients.push([collector.streamId, patient.key]);
     } else if (patient.status === "pending") {
       const inviteSharingData = await patient.getSharingData();
       const patientURL = "https://whatever.backloop.dev:4443/patient.html";
@@ -156,6 +160,10 @@ async function getPatients(collector) {
     }
   }
   console.log("## getPatients patients ", patients);
+
+  activePatients.forEach(([collectorId, inviteKey]) =>
+    showPatientDetails(collectorId, inviteKey),
+  );
 
   return patients;
 }
@@ -236,8 +244,6 @@ async function initDemoAccount(apiEndpoint) {
     console.log("## initDemoAccount published", newCollector);
   }
   console.log("## initDemoAccount with", collectors);
-  // TODO: Fix HACK
-  showPatientDetails("app-dr-hds-nhsns8v", "cmd6hijua0zmmwdk9cvypfsze");
 }
 
 async function initHDSModel() {
@@ -328,12 +334,21 @@ async function showPatientDetails(collectorId, inviteKey) {
   console.log("## loaded with invite", invite);
 
   const lines = await getPatientData(invite);
+  const entries = Object.entries(lines);
   props[inviteKey] = { columns: ["Date", "Label", "Value"] };
-  props[inviteKey].data = Object.entries(lines).map(([, v]) => ({
-    date: v.time,
-    label: v.formLabel,
-    value: (v.description || v.value).replace(/"/g, ""),
-  }));
+  props[inviteKey].data = entries
+    .filter(([, v]) => v.repeatable !== "none")
+    .map(([, v]) => ({
+      date: v.time,
+      label: v.formLabel,
+      value: (v.description || v.value).replace(/"/g, ""),
+    }));
+  props[inviteKey].info = entries
+    .filter(([, v]) => v.repeatable === "none")
+    .map(([, v]) => ({
+      label: v.formLabel,
+      value: (v.description || v.value).replace(/"/g, ""),
+    }));
   console.log("## props", props);
   localStorage.setItem("props", JSON.stringify(props));
 }
