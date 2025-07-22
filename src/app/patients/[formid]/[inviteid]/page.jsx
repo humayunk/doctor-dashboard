@@ -1,6 +1,8 @@
 "use client";
+import { l } from "hds-lib-js";
 import { usePathname } from "next/navigation";
 
+import { strings } from "@/app/dr-lib.js";
 import { Table } from "@/components/table";
 import { Card } from "@/components/ui/card";
 import { Link } from "@/components/ui/link";
@@ -14,7 +16,7 @@ export default function Page() {
   const form = data.forms[formId];
   const details = data[inviteId];
   const back = `/forms/${formId}/patients`;
-  const content = "Back to Form Information";
+  const content = l(strings.backToForm);
   const info = details.info;
   return (
     <>

@@ -1,6 +1,8 @@
 "use client";
+import { l } from "hds-lib-js";
 import { usePathname } from "next/navigation";
 
+import { strings } from "@/app/dr-lib.js";
 import { Tabbar } from "@/components/ui/tabbar";
 
 export default function Page() {
@@ -16,16 +18,14 @@ export default function Page() {
       <Tabbar tabs={form.tabs} />
       <div className="m-4 ml-8">
         <div className="m-4 prose ml-8">
-          <h2 className="font-normal">Description</h2>
+          <h2 className="font-normal">{l(strings.description)}</h2>
           <p>{form.description}</p>
-          <h2 className="font-normal">Consent</h2>
+          <h2 className="font-normal">{l(strings.consent)}</h2>
           <p>{form.consent}</p>
-          <h2 className="font-normal">Permissions</h2>
-          <p>
-            Permissions are the authorizations that a patient will grant to you.
-          </p>
-          <h3 className="italic">Read</h3>
-          <p>You will be able to read the following data points:</p>
+          <h2 className="font-normal">{l(strings.permissions)}</h2>
+          <p>{l(strings.permissionsExplanation)}</p>
+          <h3 className="italic">{l(strings.read)}</h3>
+          <p>{l(strings.readExplanation)}</p>
           <ul>
             {form.permissions.read.map((permission) => (
               <li key={permission}>{permission}</li>

@@ -1,22 +1,27 @@
+import { l } from "hds-lib-js";
+
+import { strings } from "@/app/dr-lib.js";
 import { Link } from "@/components/ui/link";
 import { Header } from "@/components/table";
 
-const columns = ["Status", "Patient Reference", "Submission Date", "Actions"];
+const columns = [
+  l(strings.status),
+  l(strings.patientReference),
+  l(strings.submissionDate),
+  l(strings.actions),
+];
 
 function Actions({ row }) {
   const classes =
     "font-medium text-blue-600 dark:text-blue-500 hover:underline";
   if (row.viewLink) {
-    const content = "👀 view data";
+    const content = `👀 ${l(strings.viewData)}`;
     return <Link content={content} href={row.viewLink} />;
   } else if (row.sharingLink) {
-    const body =
-      "Hello,\n\nI am sending you a link to fill out a form.\nPlease click on the link below to access the form:\n\n" +
-      row.sharingLink +
-      "\n\nBest regards,\nYour Doctor";
-    const copy = "📝 Copy link to clipboard";
-    const email = "✉️ Send by email";
-    const href = `mailto:?subject=Invitation&body=${encodeURIComponent(body)}`;
+    const body = `${l(strings.emailBody1)} ${row.sharingLink} ${l(strings.emailBody2)}`;
+    const copy = `📝 ${l(strings.copyToClipboard)}`;
+    const email = `✉️ ${l(strings.sendByEmail)}`;
+    const href = `mailto:?subject=${l(strings.emailSubject)}&body=${encodeURIComponent(body)}`;
     return (
       <span>
         <Link content={email} href={href} /> |{" "}
@@ -60,13 +65,13 @@ function PatientsTable({ props: { data } }) {
 function Status({ status }) {
   switch (status) {
     case "active":
-      return <>✅ active</>;
+      return <>✅ {l(strings.active)}</>;
     case "pending":
-      return <>⏳ pending</>;
+      return <>⏳ {l(strings.pending)}</>;
     case "refused":
-      return <>⛔ refused</>;
+      return <>⛔ {l(strings.refused)}</>;
     case "revoked":
-      return <>❌ revoked</>;
+      return <>❌ {l(strings.revoked)}</>;
     default:
       return status;
   }

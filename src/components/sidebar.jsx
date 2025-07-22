@@ -1,7 +1,8 @@
 "use client";
+import { l } from "hds-lib-js";
 import { usePathname } from "next/navigation";
 
-import { logout } from "@/app/dr-lib.js";
+import { logout, strings } from "@/app/dr-lib.js";
 import {
   IconForms,
   IconHamburger,
@@ -43,7 +44,7 @@ function Sidebar({ user }) {
         data-drawer-toggle="sidebar-multi-level-sidebar"
         type="button"
       >
-        <span className="sr-only">Open sidebar</span>
+        <span className="sr-only">{l(strings.openSidebar)}</span>
         <IconHamburger />
       </button>
 
@@ -65,7 +66,9 @@ function Sidebar({ user }) {
             <li>
               <div className="group flex items-center rounded-lg p-2 text-gray-900 dark:text-white">
                 <IconForms />
-                <span className="ms-3 flex-1 whitespace-nowrap">Forms</span>
+                <span className="ms-3 flex-1 whitespace-nowrap">
+                  {l(strings.forms)}
+                </span>
               </div>
             </li>
             {forms.map(({ href, id, name }) => (
@@ -81,7 +84,9 @@ function Sidebar({ user }) {
                 target="_blank"
               >
                 <IconLifesaver />
-                <span className="ms-3 flex-1 whitespace-nowrap">Help</span>
+                <span className="ms-3 flex-1 whitespace-nowrap">
+                  {l(strings.help)}
+                </span>
               </a>
             </li>
             <li>
@@ -92,7 +97,7 @@ function Sidebar({ user }) {
               >
                 <IconLogout />
                 <span className="ms-3 flex-1 whitespace-nowrap">
-                  {user}: Log Out
+                  {user}: {l(strings.logOut)}
                 </span>
               </a>
             </li>
