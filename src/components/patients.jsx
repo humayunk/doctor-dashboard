@@ -1,3 +1,5 @@
+import { Header } from "@/components/table";
+
 const columns = ["Status", "Patient Reference", "Submission Date", "Actions"];
 
 function Actions({ row }) {
@@ -51,26 +53,12 @@ function handleClick(link) {
   alert("Copied the sharing link to clipboard");
 }
 
-function Header() {
-  return (
-    <thead className="bg-gray-50 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
-      <tr>
-        {columns.map((column) => (
-          <th className="px-6 py-3" key={column} scope="col">
-            <div className="flex items-center">{column}</div>
-          </th>
-        ))}
-      </tr>
-    </thead>
-  );
-}
-
 function PatientsTable({ props: { data } }) {
   return (
     <div className="relative my-4 overflow-x-auto shadow-md sm:rounded-lg">
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
-          <Header />
+          <Header columns={columns} />
           <Body data={data} />
         </table>
       </div>

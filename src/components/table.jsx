@@ -7,7 +7,7 @@ function Body({ data }) {
   return (
     <tbody>
       {data.map((row) => (
-        <TableBody first={first} key={row[first]} keys={keys} row={row} />
+        <TableBody first={first} key={Math.random()} keys={keys} row={row} />
       ))}
     </tbody>
   );
@@ -18,18 +18,12 @@ function Header({ columns }) {
     <thead className="bg-gray-50 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
       <tr>
         {columns.map((column) => (
-          <HeaderRow column={column} first={columns[0]} key={column} />
+          <th className="px-6 py-3" key={column} scope="col">
+            <div className="flex items-center">{column}</div>
+          </th>
         ))}
       </tr>
     </thead>
-  );
-}
-
-function HeaderRow({ column }) {
-  return (
-    <th className="px-6 py-3" scope="col">
-      <div className="flex items-center">{column}</div>
-    </th>
   );
 }
 
@@ -69,4 +63,4 @@ function TableData({ item, row }) {
   return <td className="px-6 py-4">{row[item]}</td>;
 }
 
-export { Table };
+export { Header, Table };
