@@ -1,8 +1,5 @@
 import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
 
-import { props } from "@/app/data.js";
-props.forms = { summary: [] };
-
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
 /** The "base" stream for this App */
@@ -13,6 +10,8 @@ let appManaging;
 let drConnection = null;
 /** from common-lib.js */
 let model;
+/** unified data model */
+const props = { forms: { summary: [] } };
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
 const serviceInfoUrl = "https://demo.datasafe.dev/reg/service/info";
 /** from common-data-defs.js */
@@ -84,6 +83,59 @@ async function connectAPIEndpoint(apiEndpoint) {
  */
 function getAppManaging() {
   return appManaging;
+}
+
+function getLineForEvent(event) {
+  const line = {
+    description: "",
+    formLabel: "Unknown",
+    formType: "Unknown",
+    streamAndType: event.streamId + " - " + event.type,
+    time: new Date(event.time * 1000).toISOString(),
+    value: JSON.stringify(event.content),
+  };
+
+  const itemDef = model.itemsDefs.forEvent(event, false);
+  if (itemDef) {
+    line.streamId = event.streamIds[0];
+    line.eventType = event.type;
+    line.formLabel = itemDef.label;
+    line.formType = itemDef.data.type;
+    if (line.formType === "date") {
+      line.value = new Date(event.time * 1000).toISOString().split("T")[0];
+    }
+    if (line.formType === "select") {
+      line.value = event.content;
+      if (event.type === "ratio/generic") {
+        line.value = event.content.value;
+      }
+
+      const selected = itemDef.data.options.find((o) => o.value === line.value);
+      line.description = selected != null ? l(selected.label) : "-";
+    }
+    if (line.formType === "checkbox") {
+      if (event.type === "activity/plain") {
+        line.description = "X";
+        line.value = "x";
+      }
+    }
+    if (event.streamId === "body-weight") {
+      const units = event.type.split("/").pop();
+      line.value = `${line.value} ${units}`;
+    }
+  }
+  return line;
+}
+
+async function getPatientData(invite) {
+  const patientData = [];
+  const queryParams = { limit: 10000 };
+  function forEachEvent(event) {
+    patientData.push(getLineForEvent(event));
+  }
+
+  await invite.connection.getEventsStreamed(queryParams, forEachEvent);
+  return patientData;
 }
 
 async function getPatients(collector) {
@@ -184,6 +236,8 @@ async function initDemoAccount(apiEndpoint) {
     console.log("## initDemoAccount published", newCollector);
   }
   console.log("## initDemoAccount with", collectors);
+  // TODO: Fix HACK
+  showPatientDetails("app-dr-hds-nhsns8v", "cmd6hijua0zmmwdk9cvypfsze");
 }
 
 async function initHDSModel() {
@@ -266,6 +320,24 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
   }
 }
 
+async function showPatientDetails(collectorId, inviteKey) {
+  // get app from state management
+  const am = getAppManaging();
+  const collector = await am.getCollectorById(collectorId);
+  const invite = await collector.getInviteByKey(inviteKey);
+  console.log("## loaded with invite", invite);
+
+  const lines = await getPatientData(invite);
+  props[inviteKey] = { columns: ["Date", "Label", "Value"] };
+  props[inviteKey].data = Object.entries(lines).map(([k, v]) => ({
+    date: v.time,
+    label: v.formLabel,
+    value: (v.description || v.value).replace(/"/g, ""),
+  }));
+  console.log("## props", props);
+  localStorage.setItem("props", JSON.stringify(props));
+}
+
 async function showQuestionnary(questionaryId) {
   const form = (props.forms[questionaryId] = {});
 
@@ -322,10 +394,4 @@ async function showQuestionnary(questionaryId) {
   form.tabs = tabs;
 }
 
-export {
-  createSharingLink,
-  logout,
-  setQuestionnaries,
-  showLoginButton,
-  showQuestionnary,
-};
+export { logout, setQuestionnaries, showLoginButton };

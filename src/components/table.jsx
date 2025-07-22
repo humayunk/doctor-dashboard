@@ -13,17 +13,12 @@ function Body({ data }) {
   );
 }
 
-function Header({ columns, options }) {
+function Header({ columns }) {
   return (
     <thead className="bg-gray-50 text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
       <tr>
         {columns.map((column) => (
-          <HeaderRow
-            column={column}
-            first={columns[0]}
-            key={column}
-            options={options}
-          />
+          <HeaderRow column={column} first={columns[0]} key={column} />
         ))}
       </tr>
     </thead>
@@ -38,12 +33,12 @@ function HeaderRow({ column }) {
   );
 }
 
-function Table({ props: { columns, data, options } }) {
+function Table({ props: { columns, data } }) {
   return (
     <div className="relative my-4 overflow-x-auto shadow-md sm:rounded-lg">
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
-          <Header columns={columns} options={options} />
+          <Header columns={columns} />
           <Body data={data} />
         </table>
       </div>
