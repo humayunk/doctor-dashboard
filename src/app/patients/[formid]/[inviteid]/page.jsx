@@ -22,6 +22,9 @@ export default function Page() {
     <>
       <article className="prose mb-4">
         <h2 className="font-normal">{form.title}</h2>
+        <h3 className="italic">
+          {l(strings.dataFor)} {details.name}
+        </h3>
         <Link content={content} href={back} />
       </article>
       <div className="m-4 grid grid-cols-1 grid-rows-1 md:grid-cols-3">

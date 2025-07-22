@@ -25,6 +25,7 @@ const strings = {
   create: { en: "Create" },
   createSharingLink: { en: "Create Sharing Link" },
   createSharingLinkPlaceholder: { en: "Enter patient reference" },
+  dataFor: { en: "Patient data for:" },
   date: { en: "Date" },
   description: { en: "Description" },
   emailBody1: {
@@ -385,6 +386,7 @@ async function showPatientDetails(collectorId, inviteKey) {
   const entries = Object.entries(lines);
   props[inviteKey] = {
     columns: [l(strings.date), l(strings.label), l(strings.value)],
+    name: invite.eventData.content.name,
   };
   props[inviteKey].data = entries
     .filter(([, v]) => v.repeatable !== "none")
@@ -395,6 +397,7 @@ async function showPatientDetails(collectorId, inviteKey) {
     }));
   props[inviteKey].info = entries
     .filter(([, v]) => v.repeatable === "none")
+    .reverse()
     .map(([, v]) => ({
       label: v.formLabel,
       value: (v.description || v.value).replace(/"/g, ""),
