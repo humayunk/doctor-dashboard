@@ -3,7 +3,7 @@ import { l } from "hds-lib-js";
 import { usePathname } from "next/navigation";
 
 import { strings } from "@/app/dr-lib.js";
-import { Tabbar } from "@/components/ui/tabbar";
+import { Tabbar } from "@/components/tabbar";
 
 export default function Page() {
   const p = localStorage.getItem("props");

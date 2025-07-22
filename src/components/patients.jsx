@@ -1,7 +1,7 @@
 import { l } from "hds-lib-js";
 
 import { strings } from "@/app/dr-lib.js";
-import { Link } from "@/components/ui/link";
+import { Link } from "@/components/link";
 import { Header } from "@/components/table";
 
 const columns = [
@@ -12,8 +12,6 @@ const columns = [
 ];
 
 function Actions({ row }) {
-  const classes =
-    "font-medium text-blue-600 dark:text-blue-500 hover:underline";
   if (row.viewLink) {
     const content = `👀 ${l(strings.viewData)}`;
     return <Link content={content} href={row.viewLink} />;

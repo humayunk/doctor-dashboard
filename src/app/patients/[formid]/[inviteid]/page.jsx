@@ -3,9 +3,9 @@ import { l } from "hds-lib-js";
 import { usePathname } from "next/navigation";
 
 import { strings } from "@/app/dr-lib.js";
+import { Card } from "@/components/card";
+import { Link } from "@/components/link";
 import { Table } from "@/components/table";
-import { Card } from "@/components/ui/card";
-import { Link } from "@/components/ui/link";
 
 export default function Page() {
   const props = localStorage.getItem("props");
@@ -26,7 +26,7 @@ export default function Page() {
       </article>
       <div className="m-4 grid grid-cols-1 grid-rows-1 md:grid-cols-3">
         {info.map((info) => (
-          <Card key={info.label} info={info} />
+          <Card info={info} key={info.label} />
         ))}
       </div>
       <Table props={details} />

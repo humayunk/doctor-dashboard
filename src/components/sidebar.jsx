@@ -8,7 +8,7 @@ import {
   IconHamburger,
   IconLifesaver,
   IconLogout,
-} from "@/components/ui/icons";
+} from "@/components/icons";
 
 function FormEntry({ href, name }) {
   const isCurrent = getId(usePathname()) === getId(href);

@@ -2,7 +2,7 @@
 import { l } from "hds-lib-js";
 import { usePathname } from "next/navigation";
 
-import { Tabbar } from "@/components/ui/tabbar";
+import { Tabbar } from "@/components/tabbar";
 
 function ItemDef({ props: { key, label, options, type } }) {
   if (type === "select" && options) {

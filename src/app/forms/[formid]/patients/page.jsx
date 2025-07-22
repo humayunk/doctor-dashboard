@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 
 import { strings } from "@/app/dr-lib.js";
 import { PatientsTable } from "@/components/patients";
-import { Tabbar } from "@/components/ui/tabbar";
+import { Tabbar } from "@/components/tabbar";
 
 export default function Page() {
   const p = localStorage.getItem("props");
