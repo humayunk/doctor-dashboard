@@ -1,9 +1,18 @@
 import { l } from "hds-lib-js";
 
 import { strings } from "@/app/dr-lib.js";
-import { Link } from "@/components/link";
+import {
+  IconActive,
+  IconCopy,
+  IconEmail,
+  IconPending,
+  IconRefused,
+  IconRevoked,
+  IconView,
+} from "@/components/icons";
 import { Header } from "@/components/table";
 
+const classes = "flex items-center gap-1";
 const columns = [
   l(strings.status),
   l(strings.patientReference),
@@ -12,18 +21,29 @@ const columns = [
 ];
 
 function Actions({ row }) {
+  const aclasses =
+    "font-medium text-blue-600 hover:underline dark:text-blue-500";
   if (row.viewLink) {
-    const content = `👀 ${l(strings.viewData)}`;
-    return <Link content={content} href={row.viewLink} />;
+    return (
+      <a className={aclasses} href={row.viewLink}>
+        <View />
+      </a>
+    );
   } else if (row.sharingLink) {
     const body = `${l(strings.emailBody1)} ${row.sharingLink} ${l(strings.emailBody2)}`;
-    const copy = `📝 ${l(strings.copyToClipboard)}`;
-    const email = `✉️ ${l(strings.sendByEmail)}`;
     const href = `mailto:?subject=${l(strings.emailSubject)}&body=${encodeURIComponent(body)}`;
     return (
-      <span>
-        <Link content={email} href={href} /> |{" "}
-        <Link content={copy} onClick={() => handleClick(row.sharingLink)} />
+      <span className="flex items-center gap-3">
+        <a className={aclasses} href={href}>
+          <Email />
+        </a>
+        <a
+          className={aclasses}
+          href="#"
+          onClick={() => handleClick(row.sharingLink)}
+        >
+          <Copy />
+        </a>
       </span>
     );
   }
@@ -39,6 +59,22 @@ function Body({ data }) {
         <TableBody key={Math.random()} row={row} />
       ))}
     </tbody>
+  );
+}
+
+function Copy() {
+  return (
+    <span className={classes}>
+      <IconCopy /> {l(strings.copyToClipboard)}
+    </span>
+  );
+}
+
+function Email() {
+  return (
+    <span className={classes}>
+      <IconEmail /> {l(strings.sendByEmail)}
+    </span>
   );
 }
 
@@ -63,13 +99,29 @@ function PatientsTable({ props: { data } }) {
 function Status({ status }) {
   switch (status) {
     case "active":
-      return <>✅ {l(strings.active)}</>;
+      return (
+        <span className={classes}>
+          <IconActive /> {l(strings.active)}
+        </span>
+      );
     case "pending":
-      return <>⏳ {l(strings.pending)}</>;
+      return (
+        <span className={classes}>
+          <IconPending /> {l(strings.pending)}
+        </span>
+      );
     case "refused":
-      return <>⛔ {l(strings.refused)}</>;
+      return (
+        <span className={classes}>
+          <IconRefused /> {l(strings.refused)}
+        </span>
+      );
     case "revoked":
-      return <>❌ {l(strings.revoked)}</>;
+      return (
+        <span className={classes}>
+          <IconRevoked /> {l(strings.revoked)}
+        </span>
+      );
     default:
       return status;
   }
@@ -93,6 +145,14 @@ function TableBody({ row }) {
         <Actions row={row} />
       </td>
     </tr>
+  );
+}
+
+function View() {
+  return (
+    <span className={classes}>
+      <IconView /> {l(strings.viewData)}
+    </span>
   );
 }
 

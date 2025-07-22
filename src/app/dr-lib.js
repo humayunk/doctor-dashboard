@@ -59,7 +59,7 @@ const strings = {
   status: { en: "Status" },
   submissionDate: { en: "Submission Date" },
   value: { en: "Value" },
-  viewData: { en: "view data" },
+  viewData: { en: "View data" },
 };
 
 /** from common-data-defs.js */
