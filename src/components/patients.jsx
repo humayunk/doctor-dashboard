@@ -1,3 +1,4 @@
+import { Link } from "@/components/ui/link";
 import { Header } from "@/components/table";
 
 const columns = ["Status", "Patient Reference", "Submission Date", "Actions"];
@@ -6,30 +7,20 @@ function Actions({ row }) {
   const classes =
     "font-medium text-blue-600 dark:text-blue-500 hover:underline";
   if (row.viewLink) {
-    return (
-      <a className={classes} href={row.viewLink}>
-        👀 view data
-      </a>
-    );
+    const content = "👀 view data";
+    return <Link content={content} href={row.viewLink} />;
   } else if (row.sharingLink) {
     const body =
-      "Hello,\n\nI am sending you a link to fill out a form.\nPlease click on the link below to access the form: \n\n" +
+      "Hello,\n\nI am sending you a link to fill out a form.\nPlease click on the link below to access the form:\n\n" +
       row.sharingLink +
       "\n\nBest regards,\nYour Doctor";
+    const copy = "📝 Copy link to clipboard";
+    const email = "✉️ Send by email";
     const href = `mailto:?subject=Invitation&body=${encodeURIComponent(body)}`;
     return (
       <span>
-        <a className={classes} href={href}>
-          ✉️ Send by email
-        </a>{" "}
-        |{" "}
-        <a
-          className={classes}
-          href="#"
-          onClick={() => handleClick(row.sharingLink)}
-        >
-          ️📝 Copy link to clipboard
-        </a>
+        <Link content={email} href={href} /> |{" "}
+        <Link content={copy} onClick={() => handleClick(row.sharingLink)} />
       </span>
     );
   }

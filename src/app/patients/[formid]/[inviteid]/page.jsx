@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 
 import { Table } from "@/components/table";
 import { Card } from "@/components/ui/card";
+import { Link } from "@/components/ui/link";
 
 // TODO: Remove
 const dob = { label: "DOB", value: "1991-01-19" };
@@ -18,17 +19,12 @@ export default function Page() {
   const form = data.forms[formId];
   const details = data[inviteId];
   const back = `/forms/${formId}/patients`;
+  const content = "Back to Form Information";
   return (
     <>
       <article className="prose mb-4">
         <h2 className="font-normal">{form.title}</h2>
-        {/* TODO: Create <Link /> component */}
-        <a
-          className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-          href={back}
-        >
-          Back to Form Information
-        </a>
+        <Link content={content} href={back} />
       </article>
       <div className="m-4 grid grid-cols-1 grid-rows-1 md:grid-cols-3">
         <Card info={fname} />
