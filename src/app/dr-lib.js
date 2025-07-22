@@ -95,7 +95,9 @@ async function getPatients(collector) {
   const patients = await collector.getInvites();
   patients.sort((a, b) => b.dateCreation - a.dateCreation); // sort by creation date reverse
   for (const patient of patients) {
-    if (patient.status === "pending") {
+    if (patient.status === "active") {
+      patient.viewLink = `/patients/${collector.streamId}/${patient.key}`;
+    } else if (patient.status === "pending") {
       const inviteSharingData = await patient.getSharingData();
       const patientURL = "https://whatever.backloop.dev:4443/patient.html";
       patient.sharingLink = `${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`;
@@ -287,6 +289,7 @@ async function showQuestionnary(questionaryId) {
     reference: x.displayName || x.inviteName,
     sharingLink: x.sharingLink,
     status: x.status,
+    viewLink: x.viewLink,
   }));
 
   let tabs = [

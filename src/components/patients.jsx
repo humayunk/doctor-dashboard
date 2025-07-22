@@ -3,13 +3,13 @@ const columns = ["Status", "Patient Reference", "Submission Date", "Actions"];
 function Actions({ row }) {
   const classes =
     "font-medium text-blue-600 dark:text-blue-500 hover:underline";
-  if (!row.sharingLink) {
+  if (row.viewLink) {
     return (
-      <a className={classes} href="/patients/details/janedoe/intake">
+      <a className={classes} href={row.viewLink}>
         👀 view data
       </a>
     );
-  } else {
+  } else if (row.sharingLink) {
     const body =
       "Hello,\n\nI am sending you a link to fill out a form.\nPlease click on the link below to access the form: \n\n" +
       row.sharingLink +
