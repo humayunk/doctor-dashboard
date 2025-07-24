@@ -3,12 +3,6 @@ import { l } from "hds-lib-js";
 import { usePathname } from "next/navigation";
 
 import { logout, strings } from "@/app/dr-lib.js";
-import {
-  IconForms,
-  IconHamburger,
-  IconLifesaver,
-  IconLogout,
-} from "@/components/icons";
 
 function FormEntry({ href, name }) {
   const isCurrent = getId(usePathname()) === getId(href);
@@ -45,7 +39,7 @@ function Sidebar({ user }) {
         type="button"
       >
         <span className="sr-only">{l(strings.openSidebar)}</span>
-        <IconHamburger />
+        <img src="https://style.datasafe.dev/images/icons/bars-from-left.svg" />
       </button>
 
       <aside
@@ -65,7 +59,7 @@ function Sidebar({ user }) {
           <ul className="space-y-2 font-medium">
             <li>
               <div className="group flex items-center rounded-lg p-2 text-gray-900 dark:text-white">
-                <IconForms />
+                <img src="https://style.datasafe.dev/images/icons/file-pen-solid.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap">
                   {l(strings.forms)}
                 </span>
@@ -83,7 +77,7 @@ function Sidebar({ user }) {
                 rel="noreferrer"
                 target="_blank"
               >
-                <IconLifesaver />
+                <img src="https://style.datasafe.dev/images/icons/life-saver-solid.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap">
                   {l(strings.help)}
                 </span>
@@ -95,7 +89,7 @@ function Sidebar({ user }) {
                 href="#"
                 onClick={logout}
               >
-                <IconLogout />
+                <img src="https://style.datasafe.dev/images/icons/arrow-left-to-bracket.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap">
                   {user}: {l(strings.logOut)}
                 </span>

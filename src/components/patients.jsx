@@ -1,15 +1,6 @@
 import { l } from "hds-lib-js";
 
 import { strings } from "@/app/dr-lib.js";
-import {
-  IconActive,
-  IconCopy,
-  IconEmail,
-  IconPending,
-  IconRefused,
-  IconRevoked,
-  IconView,
-} from "@/components/icons";
 import { Header } from "@/components/table";
 
 const classes = "flex items-center gap-1";
@@ -65,7 +56,8 @@ function Body({ data }) {
 function Copy() {
   return (
     <span className={classes}>
-      <IconCopy /> {l(strings.copyToClipboard)}
+      <img src="https://style.datasafe.dev/images/icons/file-copy-alt-solid.svg" />{" "}
+      {l(strings.copyToClipboard)}
     </span>
   );
 }
@@ -73,7 +65,8 @@ function Copy() {
 function Email() {
   return (
     <span className={classes}>
-      <IconEmail /> {l(strings.sendByEmail)}
+      <img src="https://style.datasafe.dev/images/icons/mail-box-outline.svg" />{" "}
+      {l(strings.sendByEmail)}
     </span>
   );
 }
@@ -101,25 +94,29 @@ function Status({ status }) {
     case "active":
       return (
         <span className={classes}>
-          <IconActive /> {l(strings.active)}
+          <img src="https://style.datasafe.dev/images/icons/badge-check.svg" />{" "}
+          {l(strings.active)}
         </span>
       );
     case "pending":
       return (
         <span className={classes}>
-          <IconPending /> {l(strings.pending)}
+          <img src="https://style.datasafe.dev/images/icons/clock-arrow.svg" />{" "}
+          {l(strings.pending)}
         </span>
       );
     case "refused":
       return (
         <span className={classes}>
-          <IconRefused /> {l(strings.refused)}
+          <img src="https://style.datasafe.dev/images/icons/close.svg" />{" "}
+          {l(strings.refused)}
         </span>
       );
     case "revoked":
       return (
         <span className={classes}>
-          <IconRevoked /> {l(strings.revoked)}
+          <img src="https://style.datasafe.dev/images/icons/ban.svg" />{" "}
+          {l(strings.revoked)}
         </span>
       );
     default:
@@ -151,7 +148,8 @@ function TableBody({ row }) {
 function View() {
   return (
     <span className={classes}>
-      <IconView /> {l(strings.viewData)}
+      <img src="https://style.datasafe.dev/images/icons/folder-open-outline.svg" />{" "}
+      {l(strings.viewData)}
     </span>
   );
 }
