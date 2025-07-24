@@ -57,7 +57,7 @@ function Sidebar({ user }) {
           <img
             alt="Logo"
             className="mx-2"
-            src="https://healthdatasafe.github.io/style/images/Horizontal/hds-logo-hz-1024x400-hz-color.png"
+            src="https://healthdatasafe.github.io/style-old/images/Horizontal/hds-logo-hz-1024x400-hz-color.png"
             width="200px"
           />
         </a>
