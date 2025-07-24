@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link
-          href="https://healthdatasafe.github.io/style-old/images/Favicon/favicon.ico"
+          href="https://style.datasafe.dev/images/logos/favicon/favicon.ico"
           rel="icon"
           type="image/x-icon"
         />
