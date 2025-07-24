@@ -1,4 +1,9 @@
 {
-  "plugins": ["prettier-plugin-tailwindcss"],
+  "attributeGroups": ["$DEFAULT"],
+  "attributeSort": "ASC",
+  "plugins": [
+    "prettier-plugin-organize-attributes",
+    "prettier-plugin-tailwindcss"
+  ],
   "tailwindStylesheet": "./src/app/globals.css"
 }
