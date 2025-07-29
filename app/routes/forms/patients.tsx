@@ -1,15 +1,18 @@
-"use client";
 import { l } from "hds-lib-js";
-import { usePathname } from "next/navigation";
 
-import { strings } from "@/app/dr-lib.js";
 import { PatientsTable } from "@/components/patients";
 import { Tabbar } from "@/components/tabbar";
+import { strings } from "@/dr-lib";
 
-export default function Page() {
-  const p = localStorage.getItem("props");
-  const { forms } = JSON.parse(p) || {};
-  const formId = usePathname().split("/")[2];
+import type { Route } from "./+types/product";
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  return { fid: params.formId };
+}
+
+export default function Component({ loaderData }: Route.ComponentProps) {
+  const { forms } = JSON.parse(localStorage.getItem("props"));
+  const formId = loaderData.fid;
   const form = forms[formId];
   return (
     <>
@@ -18,6 +21,7 @@ export default function Page() {
       </article>
       <Tabbar tabs={form.tabs} />
 
+      {/* TODO: Make this work */}
       <article className="my-2 prose">
         <h3 className="italic">{l(strings.createSharingLink)}</h3>
       </article>

@@ -1,11 +1,9 @@
-"use client";
 import { l } from "hds-lib-js";
-import { usePathname } from "next/navigation";
 
-import { logout, strings } from "@/app/dr-lib.js";
+import { logout, strings } from "@/dr-lib";
 
 function FormEntry({ href, name }) {
-  const isCurrent = getId(usePathname()) === getId(href);
+  const isCurrent = getId(window.location.pathname) === getId(href);
   const classes = isCurrent
     ? "flex items-center p-2 text-blue-600 bg-gray-100 rounded-lg active dark:bg-gray-800 dark:text-blue-500 group"
     : "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group";
@@ -24,7 +22,7 @@ function getId(path) {
 }
 
 function Sidebar({ user }) {
-  const props = JSON.parse(localStorage.getItem("props")) || {};
+  const props = JSON.parse(localStorage.getItem("props"));
   if (!props.forms) {
     props.forms = { summary: [] };
   }

@@ -1,23 +1,26 @@
-"use client";
 import { l } from "hds-lib-js";
-import { usePathname } from "next/navigation";
 
-import { strings } from "@/app/dr-lib.js";
 import { Card } from "@/components/card";
 import { Link } from "@/components/link";
 import { Table } from "@/components/table";
+import { strings } from "@/dr-lib";
 
-export default function Page() {
-  const props = localStorage.getItem("props");
-  const data = JSON.parse(props) || {};
-  const path = usePathname().split("/");
-  const formId = path[2];
-  const inviteId = path.pop();
-  const form = data.forms[formId];
-  const details = data[inviteId];
+import type { Route } from "./+types/product";
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  return { fid: params.formId, iid: params.inviteId };
+}
+
+export default function Component({ loaderData }: Route.ComponentProps) {
+  const props = JSON.parse(localStorage.getItem("props"));
+  const formId = loaderData.fid;
+  const inviteId = loaderData.iid;
+  const form = props.forms[formId];
+  const details = props[inviteId];
   const back = `/forms/${formId}/patients`;
   const content = l(strings.backToForm);
   const info = details.info;
+
   return (
     <>
       <article className="prose mb-4">

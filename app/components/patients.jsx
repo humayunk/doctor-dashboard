@@ -1,7 +1,7 @@
 import { l } from "hds-lib-js";
 
-import { strings } from "@/app/dr-lib.js";
 import { Header } from "@/components/table";
+import { strings } from "@/dr-lib";
 
 const classes = "flex items-center gap-1";
 const columns = [

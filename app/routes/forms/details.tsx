@@ -1,14 +1,19 @@
-"use client";
 import { l } from "hds-lib-js";
-import { usePathname } from "next/navigation";
 
-import { strings } from "@/app/dr-lib.js";
 import { Tabbar } from "@/components/tabbar";
+import { strings } from "@/dr-lib";
 
-export default function Page() {
-  const p = localStorage.getItem("props");
-  const { forms } = JSON.parse(p) || {};
-  const formId = usePathname().split("/")[2];
+import type { Route } from "./+types/product";
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  /* const res = await fetch(`/api/products/${params.pid}`);
+   * const product = await res.json(); */
+  return { fid: params.formId };
+}
+
+export default function Component({ loaderData }: Route.ComponentProps) {
+  const { forms } = JSON.parse(localStorage.getItem("props"));
+  const formId = loaderData.fid;
   const form = forms[formId];
   return (
     <>

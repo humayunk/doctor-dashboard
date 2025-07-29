@@ -1,22 +1,35 @@
-import js from "@eslint/js";
-import eslintConfigPrettier from "eslint-config-prettier/flat";
+// @ts-check
+
+import eslint from "@eslint/js";
+import prettierConfig from "eslint-config-prettier";
 import perfectionist from "eslint-plugin-perfectionist";
 import pluginReact from "eslint-plugin-react";
-import { defineConfig, globalIgnores } from "eslint/config";
+import { globalIgnores } from "eslint/config";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
-export default defineConfig([
-  globalIgnores([".next/", "dist/"]),
-  eslintConfigPrettier,
+export default tseslint.config(
+  globalIgnores([".react-router/", "build/"]),
+  eslint.configs.recommended,
+  tseslint.configs.strict,
+  // tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
   perfectionist.configs["recommended-natural"],
   pluginReact.configs.flat.recommended,
+  prettierConfig,
   {
-    extends: ["js/recommended"],
-    files: ["src/**/*.{cjs,js,jsx,mjs}"],
+    files: ["**/*.js"],
     languageOptions: {
       globals: globals.browser,
     },
-    plugins: { js },
+  },
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
   },
   {
     rules: {
@@ -31,4 +44,4 @@ export default defineConfig([
       },
     },
   },
-]);
+);

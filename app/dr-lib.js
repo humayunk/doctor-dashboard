@@ -393,14 +393,14 @@ async function showPatientDetails(collectorId, inviteKey) {
     .map(([, v]) => ({
       date: v.time,
       label: v.formLabel,
-      value: (v.description || v.value).replace(/"/g, ""),
+      value: (v.description ?? v.value).replace(/"/g, ""),
     }));
   props[inviteKey].info = entries
     .filter(([, v]) => v.repeatable === "none")
     .reverse()
     .map(([, v]) => ({
       label: v.formLabel,
-      value: (v.description || v.value).replace(/"/g, ""),
+      value: (v.description ?? v.value).replace(/"/g, ""),
     }));
   console.log("## props", props);
   localStorage.setItem("props", JSON.stringify(props));
@@ -426,7 +426,7 @@ async function showQuestionnary(questionaryId) {
   const patients = await getPatients(collector);
   form.data = patients.map((x) => ({
     date: x.dateCreation.toLocaleString(),
-    reference: x.displayName || x.inviteName,
+    reference: x.displayName ?? x.inviteName,
     sharingLink: x.sharingLink,
     status: x.status,
     viewLink: x.viewLink,
