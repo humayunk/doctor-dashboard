@@ -1,17 +1,11 @@
-import { l } from "hds-lib-js";
+import { useTranslation } from "react-i18next";
 
 import { Header } from "@/components/table";
-import { strings } from "@/dr-lib";
 
 const classes = "flex items-center gap-1";
-const columns = [
-  l(strings.status),
-  l(strings.patientReference),
-  l(strings.submissionDate),
-  l(strings.actions),
-];
 
 function Actions({ row }) {
+  const { t } = useTranslation();
   const aclasses =
     "font-medium text-blue-600 hover:underline dark:text-blue-500";
   if (row.viewLink) {
@@ -21,8 +15,8 @@ function Actions({ row }) {
       </a>
     );
   } else if (row.sharingLink) {
-    const body = `${l(strings.emailBody1)} ${row.sharingLink} ${l(strings.emailBody2)}`;
-    const href = `mailto:?subject=${l(strings.emailSubject)}&body=${encodeURIComponent(body)}`;
+    const body = `${t("emailBody1")} ${row.sharingLink} ${t("emailBody2")}`;
+    const href = `mailto:?subject=${t("emailSubject")}&body=${encodeURIComponent(body)}`;
     return (
       <span className="flex items-center gap-3">
         <a className={aclasses} href={href}>
@@ -54,19 +48,21 @@ function Body({ data }) {
 }
 
 function Copy() {
+  const { t } = useTranslation();
   return (
     <span className={classes}>
       <img src="https://style.datasafe.dev/images/icons/file-copy-alt-solid.svg" />{" "}
-      {l(strings.copyToClipboard)}
+      {t("copyToClipboard")}
     </span>
   );
 }
 
 function Email() {
+  const { t } = useTranslation();
   return (
     <span className={classes}>
       <img src="https://style.datasafe.dev/images/icons/mail-box-outline.svg" />{" "}
-      {l(strings.sendByEmail)}
+      {t("sendByEmail")}
     </span>
   );
 }
@@ -77,6 +73,13 @@ function handleClick(link) {
 }
 
 function PatientsTable({ props: { data } }) {
+  const { t } = useTranslation();
+  const columns = [
+    t("status"),
+    t("patientReference"),
+    t("submissionDate"),
+    t("actions"),
+  ];
   return (
     <div className="relative my-4 overflow-x-auto shadow-md sm:rounded-lg">
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -90,33 +93,34 @@ function PatientsTable({ props: { data } }) {
 }
 
 function Status({ status }) {
+  const { t } = useTranslation();
   switch (status) {
     case "active":
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/badge-check.svg" />{" "}
-          {l(strings.active)}
+          {t("active")}
         </span>
       );
     case "pending":
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/clock-arrow.svg" />{" "}
-          {l(strings.pending)}
+          {t("pending")}
         </span>
       );
     case "refused":
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/close.svg" />{" "}
-          {l(strings.refused)}
+          {t("refused")}
         </span>
       );
     case "revoked":
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/ban.svg" />{" "}
-          {l(strings.revoked)}
+          {t("revoked")}
         </span>
       );
     default:
@@ -146,10 +150,11 @@ function TableBody({ row }) {
 }
 
 function View() {
+  const { t } = useTranslation();
   return (
     <span className={classes}>
       <img src="https://style.datasafe.dev/images/icons/folder-open-outline.svg" />{" "}
-      {l(strings.viewData)}
+      {t("viewData")}
     </span>
   );
 }

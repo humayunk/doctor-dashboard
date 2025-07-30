@@ -1,6 +1,5 @@
-import { l } from "hds-lib-js";
-
-import { logout, strings } from "@/dr-lib";
+import { useTranslation } from "react-i18next";
+import { logout } from "@/dr-lib";
 
 function FormEntry({ href, name }) {
   const isCurrent = getId(window.location.pathname) === getId(href);
@@ -22,6 +21,7 @@ function getId(path) {
 }
 
 function Sidebar({ user }) {
+  const { t } = useTranslation();
   const props = JSON.parse(localStorage.getItem("props"));
   if (!props.forms) {
     props.forms = { summary: [] };
@@ -36,7 +36,7 @@ function Sidebar({ user }) {
         data-drawer-toggle="sidebar-multi-level-sidebar"
         type="button"
       >
-        <span className="sr-only">{l(strings.openSidebar)}</span>
+        <span className="sr-only">{t("openSidebar")}</span>
         <img src="https://style.datasafe.dev/images/icons/bars-from-left.svg" />
       </button>
 
@@ -59,7 +59,7 @@ function Sidebar({ user }) {
               <div className="group flex items-center rounded-lg p-2 text-gray-900 dark:text-white">
                 <img src="https://style.datasafe.dev/images/icons/file-pen-solid.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap">
-                  {l(strings.forms)}
+                  {t("forms")}
                 </span>
               </div>
             </li>
@@ -77,7 +77,7 @@ function Sidebar({ user }) {
               >
                 <img src="https://style.datasafe.dev/images/icons/life-saver-solid.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap">
-                  {l(strings.help)}
+                  {t("help")}
                 </span>
               </a>
             </li>
@@ -89,7 +89,7 @@ function Sidebar({ user }) {
               >
                 <img src="https://style.datasafe.dev/images/icons/arrow-left-to-bracket.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap">
-                  {user}: {l(strings.logOut)}
+                  {user}: {t("logOut")}
                 </span>
               </a>
             </li>

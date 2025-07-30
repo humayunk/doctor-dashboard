@@ -1,4 +1,5 @@
 import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
+import i18next from "i18next";
 
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
@@ -14,54 +15,6 @@ let model;
 const props = { forms: { summary: [] } };
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
 const serviceInfoUrl = "https://demo.datasafe.dev/reg/service/info";
-
-/** all text is localizable strings */
-const strings = {
-  actions: { en: "Actions" },
-  active: { en: "active" },
-  backToForm: { en: "Back to Form Information" },
-  consent: { en: "Consent" },
-  copyToClipboard: { en: "Copy link to clipboard" },
-  create: { en: "Create" },
-  createSharingLink: { en: "Create Sharing Link" },
-  createSharingLinkPlaceholder: { en: "Enter patient reference" },
-  dataFor: { en: "Patient data for:" },
-  date: { en: "Date" },
-  description: { en: "Description" },
-  emailBody1: {
-    en: "Hello,\n\nI am sending you a link to fill out a form.\nPlease click on the link below to access the form:\n\n",
-  },
-  emailBody2: { en: "\n\nBest regards,\nYour Doctor" },
-  emailSubject: { en: "Invitation" },
-  formDetails: { en: "Form Details" },
-  forms: { en: "Forms" },
-  help: { en: "Help" },
-  label: { en: "Label" },
-  logOut: { en: "Log Out" },
-  openSidebar: { en: "Open sidebar" },
-  patientReference: { en: "Patient Reference" },
-  patients: { en: "Patients" },
-  pending: { en: "pending" },
-  permanent: { en: "permanent" },
-  permissions: { en: "Permissions" },
-  permissionsExplanation: {
-    en: "Permissions are the authorizations that a patient will grant to you.",
-  },
-  read: { en: "Read" },
-  readExplanation: {
-    en: "You will be able to read the following data points:",
-  },
-  recurring: { en: "recurring" },
-  refused: { en: "refused" },
-  revoked: { en: "revoked" },
-  search: { en: "Search" },
-  section: { en: "Section:" },
-  sendByEmail: { en: "Send by email" },
-  status: { en: "Status" },
-  submissionDate: { en: "Submission Date" },
-  value: { en: "Value" },
-  viewData: { en: "View data" },
-};
 
 /** from common-data-defs.js */
 const v2 = {
@@ -385,7 +338,7 @@ async function showPatientDetails(collectorId, inviteKey) {
   const lines = await getPatientData(invite);
   const entries = Object.entries(lines);
   props[inviteKey] = {
-    columns: [l(strings.date), l(strings.label), l(strings.value)],
+    columns: [i18next.t("date"), i18next.t("label"), i18next.t("value")],
     name: invite.eventData.content.name,
   };
   props[inviteKey].data = entries
@@ -433,8 +386,8 @@ async function showQuestionnary(questionaryId) {
   }));
 
   let tabs = [
-    { href: "patients", label: l(strings.patients) },
-    { href: "details", label: l(strings.formDetails) },
+    { href: "patients", label: i18next.t("patients") },
+    { href: "details", label: i18next.t("formDetails") },
   ];
 
   const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
@@ -447,10 +400,10 @@ async function showQuestionnary(questionaryId) {
         form[id] = { title: title };
         switch (f.type) {
           case "permanent":
-            form[id].type = l(strings.permanent);
+            form[id].type = i18next.t("permanent");
             break;
           case "recurring":
-            form[id].type = l(strings.recurring);
+            form[id].type = i18next.t("recurring");
             break;
           default:
             form[id].type = f.type;
@@ -462,7 +415,7 @@ async function showQuestionnary(questionaryId) {
       } else if (key === "name") {
         tabs.push({
           href: `section-${id}`,
-          label: `${l(strings.section)} ${title}`,
+          label: `${i18next.t("section")} ${title}`,
         });
       }
     }
@@ -471,4 +424,4 @@ async function showQuestionnary(questionaryId) {
   form.tabs = tabs;
 }
 
-export { logout, setQuestionnaries, showLoginButton, strings };
+export { logout, setQuestionnaries, showLoginButton };

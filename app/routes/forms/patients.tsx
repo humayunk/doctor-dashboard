@@ -1,8 +1,7 @@
-import { l } from "hds-lib-js";
+import { useTranslation } from "react-i18next";
 
 import { PatientsTable } from "@/components/patients";
 import { Tabbar } from "@/components/tabbar";
-import { strings } from "@/dr-lib";
 
 import type { Route } from "./+types/product";
 
@@ -11,6 +10,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 }
 
 export default function Component({ loaderData }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const { forms } = JSON.parse(localStorage.getItem("props"));
   const formId = loaderData.fid;
   const form = forms[formId];
@@ -23,20 +23,20 @@ export default function Component({ loaderData }: Route.ComponentProps) {
 
       {/* TODO: Make this work */}
       <article className="my-2 prose">
-        <h3 className="italic">{l(strings.createSharingLink)}</h3>
+        <h3 className="italic">{t("createSharingLink")}</h3>
       </article>
       <form>
         <label
           className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
           htmlFor="search"
         >
-          {l(strings.search)}
+          {t("search")}
         </label>
         <div className="relative w-1/2">
           <input
             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-4 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
             id="search"
-            placeholder={l(strings.createSharingLinkPlaceholder)}
+            placeholder={t("createSharingLinkPlaceholder")}
             required
             type="search"
           />
@@ -44,7 +44,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
             className="absolute end-2.5 bottom-2.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             type="submit"
           >
-            {l(strings.create)}
+            {t("create")}
           </button>
         </div>
       </form>

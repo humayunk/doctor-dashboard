@@ -1,9 +1,8 @@
-import { l } from "hds-lib-js";
+import { useTranslation } from "react-i18next";
 
 import { Card } from "@/components/card";
 import { Link } from "@/components/link";
 import { Table } from "@/components/table";
-import { strings } from "@/dr-lib";
 
 import type { Route } from "./+types/product";
 
@@ -12,13 +11,14 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 }
 
 export default function Component({ loaderData }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const props = JSON.parse(localStorage.getItem("props"));
   const formId = loaderData.fid;
   const inviteId = loaderData.iid;
   const form = props.forms[formId];
   const details = props[inviteId];
   const back = `/forms/${formId}/patients`;
-  const content = l(strings.backToForm);
+  const content = t("backToForm");
   const info = details.info;
 
   return (
@@ -26,7 +26,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
       <article className="prose mb-4">
         <h2 className="font-normal">{form.title}</h2>
         <h3 className="italic">
-          {l(strings.dataFor)} {details.name}
+          {t("dataFor")} {details.name}
         </h3>
         <Link content={content} href={back} />
       </article>
