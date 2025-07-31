@@ -30,7 +30,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
           className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
           htmlFor="search"
         >
-          {t("search")}
+          {t("createSharingLinkPlaceholder")}
         </label>
         <div className="relative w-1/2">
           <input

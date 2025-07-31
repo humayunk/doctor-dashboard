@@ -15,8 +15,9 @@ function Actions({ row }) {
       </a>
     );
   } else if (row.sharingLink) {
-    const body = `${t("emailBody1")} ${row.sharingLink} ${t("emailBody2")}`;
-    const href = `mailto:?subject=${t("emailSubject")}&body=${encodeURIComponent(body)}`;
+    const subject = t("emailSubject");
+    const body = t("emailBody", { link: row.sharingLink });
+    const href = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
     return (
       <span className="flex items-center gap-3">
         <a className={aclasses} href={href}>
