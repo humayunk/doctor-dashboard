@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { NavLink } from "react-router";
+
 import { logout } from "@/dr-lib";
 
 function FormEntry({ href, name }) {
@@ -9,9 +11,9 @@ function FormEntry({ href, name }) {
 
   return (
     <li key={name}>
-      <a className={classes} href={href}>
+      <NavLink className={classes} to={href}>
         {name}
-      </a>
+      </NavLink>
     </li>
   );
 }
@@ -45,14 +47,14 @@ function Sidebar({ user }) {
         className="fixed top-0 left-0 z-40 h-screen w-64 -translate-x-full transition-transform sm:translate-x-0"
         id="sidebar-multi-level-sidebar"
       >
-        <a href="/">
+        <NavLink to="/">
           <img
             alt="Logo"
             className="mx-2"
             src="https://style.datasafe.dev/images/logos/horizontal/hds-logo-hz-1024x400-hz-color.png"
             width="200px"
           />
-        </a>
+        </NavLink>
         <div className="h-full overflow-y-auto bg-gray-50 px-3 py-4 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
             <li>
@@ -82,16 +84,16 @@ function Sidebar({ user }) {
               </a>
             </li>
             <li>
-              <a
+              <NavLink
                 className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                href="#"
                 onClick={logout}
+                to="/"
               >
                 <img src="https://style.datasafe.dev/images/icons/arrow-left-to-bracket.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap">
                   {user}: {t("logOut")}
                 </span>
-              </a>
+              </NavLink>
             </li>
           </ul>
         </div>

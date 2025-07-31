@@ -59,7 +59,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 }
 
 export function HydrateFallback() {
-  return <div></div>;
+  return <div>Loading...</div>;
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

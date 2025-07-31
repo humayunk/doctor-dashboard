@@ -391,9 +391,10 @@ async function showQuestionnary(questionaryId) {
     viewLink: x.viewLink,
   }));
 
+  const base = `/forms/${collector.id}`;
   let tabs = [
-    { href: "patients", label: i18next.t("patients") },
-    { href: "details", label: i18next.t("formDetails") },
+    { href: `${base}/patients`, label: i18next.t("patients") },
+    { href: `${base}/details`, label: i18next.t("formDetails") },
   ];
 
   const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
@@ -420,7 +421,7 @@ async function showQuestionnary(questionaryId) {
         });
       } else if (key === "name") {
         tabs.push({
-          href: `section-${id}`,
+          href: `${base}/section-${id}`,
           label: `${i18next.t("section")} ${title}`,
         });
       }

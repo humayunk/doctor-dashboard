@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { NavLink } from "react-router";
 
 import { Header } from "@/components/table";
 
@@ -10,9 +11,12 @@ function Actions({ row }) {
     "font-medium text-blue-600 hover:underline dark:text-blue-500";
   if (row.viewLink) {
     return (
-      <a className={aclasses} href={row.viewLink}>
-        <View />
-      </a>
+      <NavLink className={aclasses} to={row.viewLink}>
+        <span className={classes}>
+          <img src="https://style.datasafe.dev/images/icons/folder-open-outline.svg" />{" "}
+          {t("viewData")}
+        </span>
+      </NavLink>
     );
   } else if (row.sharingLink) {
     const subject = t("emailSubject");
@@ -147,16 +151,6 @@ function TableBody({ row }) {
         <Actions row={row} />
       </td>
     </tr>
-  );
-}
-
-function View() {
-  const { t } = useTranslation();
-  return (
-    <span className={classes}>
-      <img src="https://style.datasafe.dev/images/icons/folder-open-outline.svg" />{" "}
-      {t("viewData")}
-    </span>
   );
 }
 

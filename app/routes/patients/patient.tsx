@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
+import { NavLink } from "react-router";
 
 import { Card } from "@/components/card";
-import { Link } from "@/components/link";
 import { Table } from "@/components/table";
 
 import type { Route } from "./+types/product";
@@ -28,7 +28,12 @@ export default function Component({ loaderData }: Route.ComponentProps) {
         <h3 className="italic">
           {t("dataFor")} {details.name}
         </h3>
-        <Link content={content} href={back} />
+        <NavLink
+          className="font-medium text-blue-600 hover:underline dark:text-blue-500"
+          to={back}
+        >
+          {content}
+        </NavLink>
       </article>
       <div className="m-4 grid grid-cols-1 grid-rows-1 md:grid-cols-3">
         {info.map((info) => (
