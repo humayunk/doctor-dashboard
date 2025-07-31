@@ -246,6 +246,12 @@ async function initDemoAccount(apiEndpoint) {
     console.log("## initDemoAccount published", newCollector);
   }
   console.log("## initDemoAccount with", collectors);
+
+  // set default settings (example of how to retrieve/set settings)
+  const defaultSettings = { theme: "dark", lang: "en" };
+  await appManaging.setCustomSettings(defaultSettings);
+  const settings = await appManaging.getCustomSettings();
+  localStorage.setItem("settings", JSON.stringify(settings));
 }
 
 async function initHDSModel() {
