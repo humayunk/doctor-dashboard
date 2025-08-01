@@ -248,7 +248,7 @@ async function initDemoAccount(apiEndpoint) {
   console.log("## initDemoAccount with", collectors);
 
   // set default settings (example of how to retrieve/set settings)
-  const defaultSettings = { theme: "dark", lang: "en" };
+  const defaultSettings = { lang: "en", theme: "dark" };
   await appManaging.setCustomSettings(defaultSettings);
   const settings = await appManaging.getCustomSettings();
   localStorage.setItem("settings", JSON.stringify(settings));

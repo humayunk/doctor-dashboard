@@ -18,7 +18,7 @@ export default tseslint.config(
   pluginReact.configs.flat.recommended,
   prettierConfig,
   {
-    files: ["**/*.js"],
+    files: ["**/*.{js,ts}"],
     languageOptions: {
       globals: globals.browser,
     },
