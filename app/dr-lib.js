@@ -374,12 +374,14 @@ async function showQuestionnary(questionaryId) {
   // show details
   const { requestContent } = collector.statusData;
   form.consent = l(requestContent.consent);
-  form.requester = requestContent.requester.name;
+  form.requester = requestContent.requester?.name;
   form.description = l(requestContent.description);
   form.permissions = {};
-  form.permissions.read = requestContent.permissions
-    .filter((p) => p.level === "read")
-    .map((p) => p.defaultName);
+  if (requestContent.permissions) {
+    form.permissions.read = requestContent.permissions
+      .filter((p) => p.level === "read")
+      .map((p) => p.defaultName);
+  }
   form.title = l(requestContent.title);
 
   const patients = await getPatients(collector);
@@ -398,7 +400,9 @@ async function showQuestionnary(questionaryId) {
   ];
 
   const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
-  const forms = Object.values(requestContent.app.data.forms);
+  const forms = requestContent.app?.data?.forms
+    ? Object.values(requestContent.app.data.forms)
+    : [];
   for (const [key] of Object.entries(keyTitles)) {
     for (const f of forms) {
       const id = f.key;
