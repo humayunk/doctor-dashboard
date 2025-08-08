@@ -40,7 +40,7 @@ function Actions({ row }) {
 }
 
 function Body({ data }) {
-  if (!data || !data[0]) {
+  if (!data?.[0]) {
     return;
   }
   return (

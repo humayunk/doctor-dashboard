@@ -1,5 +1,5 @@
 function Body({ data }) {
-  if (!data || !data[0]) {
+  if (!data?.[0]) {
     return;
   }
   const keys = Object.keys(data[0]);

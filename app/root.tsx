@@ -7,10 +7,11 @@ import {
   ScrollRestoration,
 } from "react-router";
 
-import type { Route } from "./+types/root";
-
 import "@/app.css";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import i18n from "@/i18n";
+
+import type { Route } from "./+types/root";
 
 export const links: Route.LinksFunction = () => [
   { href: "https://fonts.googleapis.com", rel: "preconnect" },

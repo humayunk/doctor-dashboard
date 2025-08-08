@@ -25,9 +25,7 @@ function getId(path) {
 function Sidebar({ user }) {
   const { t } = useTranslation();
   const props = JSON.parse(localStorage.getItem("props"));
-  if (!props.forms) {
-    props.forms = { summary: [] };
-  }
+  props.forms ??= { summary: [] };
   const forms = props.forms.summary;
   return (
     <>

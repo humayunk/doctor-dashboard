@@ -394,7 +394,7 @@ async function showQuestionnary(questionaryId) {
   }));
 
   const base = `/forms/${collector.id}`;
-  let tabs = [
+  const tabs = [
     { href: `${base}/patients`, label: i18next.t("patients") },
     { href: `${base}/details`, label: i18next.t("formDetails") },
   ];
