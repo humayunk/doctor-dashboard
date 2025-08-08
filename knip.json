@@ -1,5 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["app/{cli,index,main,root}.{cjs,cts,js,jsx,mjs,mts,ts,tsx}"],
+  "ignoreDependencies": [
+    "@react-router/node",
+    "@tailwindcss/typography",
+    "isbot",
+    "tailwindcss"
+  ],
   "project": ["**/*.{js,jsx,mjs,ts,tsx}"]
 }
