@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { PatientsTable } from "@/components/patients";
 import { Tabbar } from "@/components/tabbar";
 
-import type { Route } from "./+types/product";
+import type { Route } from "./+types/patients";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { fid: params.formId };

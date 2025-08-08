@@ -2,7 +2,7 @@ import { l } from "hds-lib-js";
 
 import { Tabbar } from "@/components/tabbar";
 
-import type { Route } from "./+types/product";
+import type { Route } from "./+types/sections";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { fid: params.formId, sid: params.sectionId.replace("section-", "") };

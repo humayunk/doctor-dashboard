@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { Tabbar } from "@/components/tabbar";
 
-import type { Route } from "./+types/product";
+import type { Route } from "./+types/details";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   /* const res = await fetch(`/api/products/${params.pid}`);

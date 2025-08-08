@@ -4,7 +4,7 @@ import { NavLink } from "react-router";
 import { Card } from "@/components/card";
 import { Table } from "@/components/table";
 
-import type { Route } from "./+types/product";
+import type { Route } from "./+types/patient";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { fid: params.formId, iid: params.inviteId };
