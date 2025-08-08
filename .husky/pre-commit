@@ -1,0 +1,4 @@
+# ordered from most likely to least likely to error
+npm run lint:fix
+npm run knip:fix
+npm run format:fix

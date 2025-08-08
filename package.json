@@ -9,8 +9,10 @@
     "format": "npx prettier . --check",
     "format:fix": "npx prettier . --write",
     "knip": "knip",
+    "knip:fix": "knip --fix --allow-remove-files",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prepare": "husky",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },
@@ -39,6 +41,7 @@
     "eslint-plugin-perfectionist": "^4.15.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.2.0",
+    "husky": "^9.1.7",
     "knip": "^5.62.0",
     "prettier": "3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
