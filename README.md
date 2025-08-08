@@ -33,8 +33,11 @@ npm run build
 - [ESLint](https://eslint.org/): linting, with the following plugins:
   - [Perfectionist](https://perfectionist.dev/)
 - [Flowbite](https://flowbite.com/): aesthetically pleasing component development
-- [HDS Lib](https://github.com/healthdatasafe/hds-lib-js)
+- [HDS Lib](https://github.com/healthdatasafe/hds-lib-js): the "backend" for this client app
+- [Husky](https://typicode.github.io/husky/): easy pre-commit hook enforcement
+- [i18next](https://www.i18next.com/): internationalization framework
 - [Inter](https://fonts.google.com/specimen/Inter): font
+- [Knip](https://knip.dev/): code decluttering
 - [Prettier](https://prettier.io/) with the following plugins:
   - [Tailwind CSS](https://tailwindcss.com/blog/automatic-class-sorting-with-prettier)
 - [React Router](https://reactrouter.com/): [React](https://react.dev/) framework
