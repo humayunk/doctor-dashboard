@@ -104,28 +104,28 @@ function Status({ status }) {
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/badge-check.svg" />{" "}
-          {t("active")}
+          <span className="dark:text-gray-400">{t("active")}</span>
         </span>
       );
     case "pending":
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/clock-arrow.svg" />{" "}
-          {t("pending")}
+          <span className="dark:text-gray-400">{t("pending")}</span>
         </span>
       );
     case "refused":
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/close.svg" />{" "}
-          {t("refused")}
+          <span className="dark:text-gray-400">{t("refused")}</span>
         </span>
       );
     case "revoked":
       return (
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/ban.svg" />{" "}
-          {t("revoked")}
+          <span className="dark:text-gray-400">{t("revoked")}</span>
         </span>
       );
     default:

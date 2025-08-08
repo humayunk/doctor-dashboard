@@ -7,7 +7,7 @@ function FormEntry({ href, name }) {
   const isCurrent = getId(window.location.pathname) === getId(href);
   const classes = isCurrent
     ? "flex items-center p-2 text-blue-600 bg-gray-100 rounded-lg active dark:bg-gray-800 dark:text-blue-500 group"
-    : "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group";
+    : "flex items-center p-2 text-gray-900 rounded-lg dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 group";
 
   return (
     <li key={name}>
@@ -60,7 +60,7 @@ function Sidebar({ user }) {
             <li>
               <div className="group flex items-center rounded-lg p-2 text-gray-900 dark:text-white">
                 <img src="https://style.datasafe.dev/images/icons/file-pen-solid.svg" />
-                <span className="ms-3 flex-1 whitespace-nowrap">
+                <span className="ms-3 flex-1 whitespace-nowrap dark:text-gray-300">
                   {t("forms")}
                 </span>
               </div>
@@ -78,7 +78,7 @@ function Sidebar({ user }) {
                 target="_blank"
               >
                 <img src="https://style.datasafe.dev/images/icons/life-saver-solid.svg" />
-                <span className="ms-3 flex-1 whitespace-nowrap">
+                <span className="ms-3 flex-1 whitespace-nowrap dark:text-gray-300">
                   {t("help")}
                 </span>
               </a>
@@ -90,7 +90,7 @@ function Sidebar({ user }) {
                 to="/"
               >
                 <img src="https://style.datasafe.dev/images/icons/arrow-left-to-bracket.svg" />
-                <span className="ms-3 flex-1 whitespace-nowrap">
+                <span className="ms-3 flex-1 whitespace-nowrap dark:text-gray-300">
                   {user}: {t("logOut")}
                 </span>
               </NavLink>

@@ -41,7 +41,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
             type="search"
           />
           <button
-            className="absolute end-2.5 bottom-2.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="absolute end-2.5 bottom-2.5 rounded-lg bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none dark:bg-blue-700 dark:text-gray-300 dark:hover:bg-blue-800 dark:focus:ring-blue-800"
             type="submit"
           >
             {t("create")}
