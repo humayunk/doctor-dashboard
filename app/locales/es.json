@@ -8,6 +8,7 @@
   "createSharingLink": "Generar enlace para compartir",
   "createSharingLinkPlaceholder": "Ingrese un identificador del paciente",
   "dataFor": "Datos del paciente::",
+  "darkMode": "Modo Oscuro",
   "date": "Fecha",
   "description": "Descripción",
   "emailBody": "Estimado/a,\n\nLe enviamos un enlace para que complete un formulario.\nPor favor, haga clic en el siguiente enlace para acceder:\n\n{{link}}\n\n",
@@ -16,6 +17,8 @@
   "forms": "Formulario",
   "help": "Ayuda",
   "label": "Etiqueta",
+  "language": "Idioma",
+  "lightMode": "Modo Ligero",
   "logOut": "Cerrar Sesión",
   "openSidebar": "Abrir menú lateral",
   "patientReference": "Referencia del paciente",
@@ -32,8 +35,11 @@
   "search": "Buscar",
   "section": "Sección:",
   "sendByEmail": "Enviar por correo",
+  "settings": "Configuración",
+  "settingsInstructions": "Vuelva a cargar la página después de cambiar el idioma.",
   "status": "Estado",
   "submissionDate": "Fecha de envío",
+  "theme": "Tema",
   "value": "Valor",
   "viewData": "Ver datos"
 }

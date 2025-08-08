@@ -7,6 +7,7 @@
   "create": "Create",
   "createSharingLink": "Create Sharing Link",
   "createSharingLinkPlaceholder": "Enter patient reference",
+  "darkMode": "Dark Mode",
   "dataFor": "Patient data for:",
   "date": "Date",
   "description": "Description",
@@ -16,6 +17,8 @@
   "forms": "Forms",
   "help": "Help",
   "label": "Label",
+  "language": "Language",
+  "lightMode": "Light Mode",
   "logOut": "Log Out",
   "openSidebar": "Open sidebar",
   "patientReference": "Patient Reference",
@@ -31,8 +34,11 @@
   "revoked": "revoked",
   "section": "Section:",
   "sendByEmail": "Send by email",
+  "settings": "Settings",
+  "settingsInstructions": "Please reload the page after changing your language.",
   "status": "Status",
   "submissionDate": "Submission Date",
+  "theme": "Theme",
   "value": "Value",
   "viewData": "View data"
 }

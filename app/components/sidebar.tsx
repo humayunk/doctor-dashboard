@@ -86,6 +86,17 @@ function Sidebar({ user }) {
             <li>
               <NavLink
                 className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                to="/settings"
+              >
+                <img src="https://style.datasafe.dev/images/icons/cog-outline.svg" />
+                <span className="ms-3 flex-1 whitespace-nowrap dark:text-gray-300">
+                  {t("settings")}
+                </span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                 onClick={logout}
                 to="/"
               >

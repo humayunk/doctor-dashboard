@@ -15,5 +15,6 @@ export default [
       route(":sectionId", "routes/forms/sections.tsx"),
     ]),
     route("patients/:formId/:inviteId", "routes/patients/patient.tsx"),
+    route("settings", "routes/settings.tsx"),
   ]),
 ] satisfies RouteConfig;
