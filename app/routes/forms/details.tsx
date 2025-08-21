@@ -1,14 +1,12 @@
+import { l } from "hds-lib-js";
 import i18next from "i18next";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Tabbar } from "@/components/tabbar";
 import { getAppManaging } from "@/dr-lib";
-import { l } from "hds-lib-js";
 
 import type { Route } from "./+types/details";
-
-
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { fid: params.formId };
@@ -18,7 +16,6 @@ export default function Component({ loaderData }: Route.ComponentProps) {
   const { t } = useTranslation();
   const appManager = getAppManaging();
   const [form, setForm] = useState({});
-
 
   useEffect(() => {
     const loadForm = async () => {
@@ -45,11 +42,13 @@ export default function Component({ loaderData }: Route.ComponentProps) {
       ];
       // add existing forms to tabs
       if (requestContent.app.data.forms) {
-        for (const [formSectionKey, formSection] of Object.entries(requestContent.app.data.forms)) {
+        for (const [formSectionKey, formSection] of Object.entries(
+          requestContent.app.data.forms,
+        )) {
           tabs.push({
-          href: `${base}/section-${formSectionKey}`,
-          label: `${i18next.t("section")} ${formSection.name}`,
-        });
+            href: `${base}/section-${formSectionKey}`,
+            label: `${i18next.t("section")} ${formSection.name}`,
+          });
         }
       }
 
@@ -60,11 +59,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
     loadForm();
   }, [appManager, loaderData.fid]);
 
-  if (form.tabs == null) return (
-    <>
-      Loading...
-    </>
-  )
+  if (form.tabs == null) return <>Loading...</>;
 
   return (
     <>

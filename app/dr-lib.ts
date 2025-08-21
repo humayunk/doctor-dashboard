@@ -170,6 +170,77 @@ async function getPatients(collector) {
   return patients;
 }
 
+async function getQuestionnaryDetails(questionaryId) {
+  const form = {};
+
+  const am = getAppManaging();
+  const collector = await am.getCollectorById(questionaryId);
+  await collector.init(); // load controller data only when needed
+  // show details
+  const { requestContent } = collector.statusData;
+  form.consent = l(requestContent.consent);
+  form.requester = requestContent.requester?.name;
+  form.description = l(requestContent.description);
+  form.permissions = {};
+  if (requestContent.permissions) {
+    form.permissions.read = requestContent.permissions
+      .filter((p) => p.level === "read")
+      .map((p) => p.defaultName);
+  }
+  form.title = l(requestContent.title);
+
+  const patients = await getPatients(collector);
+  form.data = patients.map((x) => ({
+    date: x.dateCreation.toLocaleString(),
+    reference: x.displayName ?? x.inviteName,
+    sharingLink: x.sharingLink,
+    status: x.status,
+    viewLink: x.viewLink,
+  }));
+
+  const base = `/forms/${collector.id}`;
+  const tabs = [
+    { href: `${base}/patients`, label: i18next.t("patients") },
+    { href: `${base}/details`, label: i18next.t("formDetails") },
+  ];
+
+  const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
+  const forms = requestContent.app?.data?.forms
+    ? Object.values(requestContent.app.data.forms)
+    : [];
+  for (const [key] of Object.entries(keyTitles)) {
+    for (const f of forms) {
+      const id = f.key;
+      const title = f.name;
+      if (key === "itemKeys") {
+        form[id] = { title: title };
+        switch (f.type) {
+          case "permanent":
+            form[id].type = i18next.t("permanent");
+            break;
+          case "recurring":
+            form[id].type = i18next.t("recurring");
+            break;
+          default:
+            form[id].type = f.type;
+        }
+        form[id].itemDefs = f.itemKeys.map((itemKey) => {
+          const itemDef = model.itemsDefs.forKey(itemKey);
+          return itemDef.data;
+        });
+      } else if (key === "name") {
+        tabs.push({
+          href: `${base}/section-${id}`,
+          label: `${i18next.t("section")} ${title}`,
+        });
+      }
+    }
+  }
+
+  form.tabs = tabs;
+  return form;
+}
+
 function hdsModel() {
   if (!model) {
     throw new Error("Initialize model with `initHDSModel()` first");
@@ -364,77 +435,6 @@ async function showPatientDetails(collectorId, inviteKey) {
     }));
   console.log("## props", props);
   localStorage.setItem("props", JSON.stringify(props));
-}
-
-async function getQuestionnaryDetails(questionaryId) {
-  const form = {};
-
-  const am = getAppManaging();
-  const collector = await am.getCollectorById(questionaryId);
-  await collector.init(); // load controller data only when needed
-  // show details
-  const { requestContent } = collector.statusData;
-  form.consent = l(requestContent.consent);
-  form.requester = requestContent.requester?.name;
-  form.description = l(requestContent.description);
-  form.permissions = {};
-  if (requestContent.permissions) {
-    form.permissions.read = requestContent.permissions
-      .filter((p) => p.level === "read")
-      .map((p) => p.defaultName);
-  }
-  form.title = l(requestContent.title);
-
-  const patients = await getPatients(collector);
-  form.data = patients.map((x) => ({
-    date: x.dateCreation.toLocaleString(),
-    reference: x.displayName ?? x.inviteName,
-    sharingLink: x.sharingLink,
-    status: x.status,
-    viewLink: x.viewLink,
-  }));
-
-  const base = `/forms/${collector.id}`;
-  const tabs = [
-    { href: `${base}/patients`, label: i18next.t("patients") },
-    { href: `${base}/details`, label: i18next.t("formDetails") },
-  ];
-
-  const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
-  const forms = requestContent.app?.data?.forms
-    ? Object.values(requestContent.app.data.forms)
-    : [];
-  for (const [key] of Object.entries(keyTitles)) {
-    for (const f of forms) {
-      const id = f.key;
-      const title = f.name;
-      if (key === "itemKeys") {
-        form[id] = { title: title };
-        switch (f.type) {
-          case "permanent":
-            form[id].type = i18next.t("permanent");
-            break;
-          case "recurring":
-            form[id].type = i18next.t("recurring");
-            break;
-          default:
-            form[id].type = f.type;
-        }
-        form[id].itemDefs = f.itemKeys.map((itemKey) => {
-          const itemDef = model.itemsDefs.forKey(itemKey);
-          return itemDef.data;
-        });
-      } else if (key === "name") {
-        tabs.push({
-          href: `${base}/section-${id}`,
-          label: `${i18next.t("section")} ${title}`,
-        });
-      }
-    }
-  }
-
-  form.tabs = tabs;
-  return form;
 }
 
 export { getAppManaging, logout, setQuestionnaries, showLoginButton };
