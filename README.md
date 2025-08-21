@@ -29,7 +29,8 @@ npm run build
 ```
 
 ## Questions
-- Why using the package `isbot` ? 
+
+- Why using the package `isbot` ?
 
 ## Technology Choices
 

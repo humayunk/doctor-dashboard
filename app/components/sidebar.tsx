@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
 
@@ -39,13 +39,13 @@ function Sidebar({ user }) {
           name: collector.name,
         });
       }
-      console.log('###forms', forms);
+      console.log("###forms", forms);
       setForms(forms);
-    }
+    };
 
     updateForms();
   }, [appManager]);
-  
+
   return (
     <>
       <button
