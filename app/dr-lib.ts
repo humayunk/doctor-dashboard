@@ -435,4 +435,4 @@ async function showQuestionnary(questionaryId) {
   form.tabs = tabs;
 }
 
-export { logout, setQuestionnaries, showLoginButton };
+export { getAppManaging, logout, setQuestionnaries, showLoginButton };

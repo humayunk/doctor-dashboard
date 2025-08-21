@@ -9,6 +9,7 @@ import {
 export default [
   index("routes/index.tsx"),
   layout("routes/layouts/sidebar.tsx", [
+    route("forms", "routes/forms/welcome.tsx"),
     ...prefix("forms/:formId", [
       route("details", "routes/forms/details.tsx"),
       route("patients", "routes/forms/patients.tsx"),

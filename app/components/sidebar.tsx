@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
 
+import { getAppManaging } from "@/dr-lib";
 import { logout } from "@/dr-lib";
 
 function FormEntry({ href, name }) {
@@ -24,9 +26,26 @@ function getId(path) {
 
 function Sidebar({ user }) {
   const { t } = useTranslation();
-  const props = JSON.parse(localStorage.getItem("props"));
-  props.forms ??= { summary: [] };
-  const forms = props.forms.summary;
+  const appManager = getAppManaging();
+  const [forms, setForms] = useState([]);
+  useEffect(() => {
+    const updateForms = async () => {
+      const collectors = await appManager.getCollectors();
+      const forms = [];
+      for (const collector of collectors) {
+        forms.push({
+          href: `/forms/${collector.id}/patients`,
+          id: collector.id,
+          name: collector.name,
+        });
+      }
+      console.log('###forms', forms);
+      setForms(forms);
+    }
+
+    updateForms();
+  }, [appManager]);
+  
   return (
     <>
       <button

@@ -28,6 +28,9 @@ Create a production build:
 npm run build
 ```
 
+## Questions
+- Why using the package `isbot` ? 
+
 ## Technology Choices
 
 - [ESLint](https://eslint.org/): linting, with the following plugins:
