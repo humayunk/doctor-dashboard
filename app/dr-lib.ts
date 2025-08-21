@@ -279,7 +279,8 @@ async function setQuestionnaries() {
       id: collector.id,
       name: collector.name,
     });
-    await showQuestionnary(collector.id);
+    const details = await getQuestionnaryDetails(collector.id);
+    props.forms[collector.id] = details;
   }
   localStorage.setItem("props", JSON.stringify(props));
 }
@@ -365,8 +366,8 @@ async function showPatientDetails(collectorId, inviteKey) {
   localStorage.setItem("props", JSON.stringify(props));
 }
 
-async function showQuestionnary(questionaryId) {
-  const form = (props.forms[questionaryId] = {});
+async function getQuestionnaryDetails(questionaryId) {
+  const form = {};
 
   const am = getAppManaging();
   const collector = await am.getCollectorById(questionaryId);
@@ -433,6 +434,7 @@ async function showQuestionnary(questionaryId) {
   }
 
   form.tabs = tabs;
+  return form;
 }
 
 export { getAppManaging, logout, setQuestionnaries, showLoginButton };
