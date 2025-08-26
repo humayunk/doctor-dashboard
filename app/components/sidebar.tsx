@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 
 import { getAppManaging } from "@/dr-lib";
 import { logout } from "@/dr-lib";

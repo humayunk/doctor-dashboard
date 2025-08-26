@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Route } from "./+types/settings";
-
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  return { fid: params.formId, iid: params.inviteId };
-}
-
 export default function Component() {
   const { t } = useTranslation();
   const languageOptions = [

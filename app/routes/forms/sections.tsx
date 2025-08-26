@@ -1,17 +1,12 @@
 import { l } from "hds-lib-js";
+import { useParams } from "react-router-dom";
 
 import { Tabbar } from "@/components/tabbar";
 
-import type { Route } from "./+types/sections";
-
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  return { fid: params.formId, sid: params.sectionId.replace("section-", "") };
-}
-
-export default function Component({ loaderData }: Route.ComponentProps) {
+export default function Component() {
   const { forms } = JSON.parse(localStorage.getItem("props"));
-  const formId = loaderData.fid;
-  const sectionId = loaderData.sid;
+  const { formId, sectionId: rawSectionId } = useParams();
+  const sectionId = rawSectionId.replace("section-", "");
   const form = forms[formId];
   const section = form[sectionId];
   return (

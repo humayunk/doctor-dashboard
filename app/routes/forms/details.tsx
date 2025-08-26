@@ -2,26 +2,25 @@ import { l } from "hds-lib-js";
 import i18next from "i18next";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 import { Tabbar } from "@/components/tabbar";
 import { getAppManaging } from "@/dr-lib";
 
-import type { Route } from "./+types/details";
-
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  return { fid: params.formId };
-}
-
-export default function Component({ loaderData }: Route.ComponentProps) {
+export default function Component() {
   const { t } = useTranslation();
   const appManager = getAppManaging();
-  const [form, setForm] = useState({});
+
+  const [form, setForm] = useState({ tabs: null, title: ''});
+  const { formId } = useParams();
+
+  console.log('*****', formId);
 
   useEffect(() => {
     const loadForm = async () => {
-      const collector = await appManager.getCollectorById(loaderData.fid);
+      const collector = await appManager.getCollectorById(formId);
       await collector.init(); // load controller data only when needed
-      const formData = {};
+      const formData: any = {};
       // show details
       const { requestContent } = collector.statusData;
       formData.consent = l(requestContent.consent);
@@ -30,8 +29,8 @@ export default function Component({ loaderData }: Route.ComponentProps) {
       formData.permissions = {};
       if (requestContent.permissions) {
         formData.permissions.read = requestContent.permissions
-          .filter((p) => p.level === "read")
-          .map((p) => p.defaultName);
+          .filter((p: any) => p.level === "read")
+          .map((p: any) => p.defaultName);
       }
       formData.title = l(requestContent.title);
 
@@ -57,7 +56,7 @@ export default function Component({ loaderData }: Route.ComponentProps) {
       setForm(formData);
     };
     loadForm();
-  }, [appManager, loaderData.fid]);
+  }, [appManager, formId]);
 
   if (form.tabs == null) return <>Loading...</>;
 

@@ -1,20 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { Card } from "@/components/card";
 import { Table } from "@/components/table";
 
-import type { Route } from "./+types/patient";
-
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  return { fid: params.formId, iid: params.inviteId };
-}
-
-export default function Component({ loaderData }: Route.ComponentProps) {
+export default function Component() {
   const { t } = useTranslation();
   const props = JSON.parse(localStorage.getItem("props"));
-  const formId = loaderData.fid;
-  const inviteId = loaderData.iid;
+  const { formId, inviteId } = useParams();
   const form = props.forms[formId];
   const details = props[inviteId];
   const back = `/forms/${formId}/patients`;

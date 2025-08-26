@@ -1,18 +1,13 @@
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 import { PatientsTable } from "@/components/patients";
 import { Tabbar } from "@/components/tabbar";
 
-import type { Route } from "./+types/patients";
-
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  return { fid: params.formId };
-}
-
-export default function Component({ loaderData }: Route.ComponentProps) {
+export default function Component() {
   const { t } = useTranslation();
   const { forms } = JSON.parse(localStorage.getItem("props"));
-  const formId = loaderData.fid;
+  const { formId } = useParams();
   const form = forms[formId];
   return (
     <>
