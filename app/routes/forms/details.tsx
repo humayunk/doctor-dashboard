@@ -11,10 +11,8 @@ export default function Component() {
   const { t } = useTranslation();
   const appManager = getAppManaging();
 
-  const [form, setForm] = useState({ tabs: null, title: ''});
+  const [form, setForm] = useState({ tabs: null, title: "" });
   const { formId } = useParams();
-
-  console.log('*****', formId);
 
   useEffect(() => {
     const loadForm = async () => {
