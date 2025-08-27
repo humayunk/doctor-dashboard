@@ -6,11 +6,11 @@ const APP_MANAGING_NAME = "HDS Dr App PoC";
 /** The "base" stream for this App */
 const APP_MANAGING_STREAMID = "app-dr-hds";
 /** initialized during pryvAuthStateChange */
-let appManaging;
+let appManaging: appTemplates.AppManagingAccount;
 /** Marked as "OLD" but still seems necessary */
 let drConnection = null;
 /** from common-lib.js */
-let model;
+let model: HDSModel;
 /** unified data model */
 const props = { forms: { summary: [] } };
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
@@ -83,9 +83,9 @@ async function connectAPIEndpoint(apiEndpoint) {
 /**
  * exposes appManaging for the app
  */
-function getAppManaging() {
+function getAppManaging(): appTemplates.AppManagingAccount {
   return appManaging;
-}
+} 
 
 function getLineForEvent(event) {
   const line = {
