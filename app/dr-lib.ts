@@ -1,4 +1,4 @@
-import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
+import { appTemplates, HDSModel, l, pryv, initHDSModel, getHDSModel } from "hds-lib-js";
 import i18next from "i18next";
 
 /** The name of this application */
@@ -9,8 +9,6 @@ const APP_MANAGING_STREAMID = "app-dr-hds";
 let appManaging: appTemplates.AppManagingAccount;
 /** Marked as "OLD" but still seems necessary */
 let drConnection = null;
-/** from common-lib.js */
-let model: HDSModel;
 /** unified data model */
 const props = { forms: { summary: [] } };
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
@@ -85,7 +83,7 @@ async function connectAPIEndpoint(apiEndpoint) {
  */
 function getAppManaging(): appTemplates.AppManagingAccount {
   return appManaging;
-} 
+}
 
 function getLineForEvent(event) {
   const line = {
@@ -98,7 +96,7 @@ function getLineForEvent(event) {
     value: JSON.stringify(event.content),
   };
 
-  const itemDef = model.itemsDefs.forEvent(event, false);
+  const itemDef = getHDSModel().itemsDefs.forEvent(event, false);
   if (itemDef) {
     line.streamId = event.streamIds[0];
     line.eventType = event.type;
@@ -225,7 +223,7 @@ async function getQuestionnaryDetails(questionaryId) {
             form[id].type = f.type;
         }
         form[id].itemDefs = f.itemKeys.map((itemKey) => {
-          const itemDef = model.itemsDefs.forKey(itemKey);
+          const itemDef = getHDSModel().itemsDefs.forKey(itemKey);
           return itemDef.data;
         });
       } else if (key === "name") {
@@ -241,13 +239,6 @@ async function getQuestionnaryDetails(questionaryId) {
   return form;
 }
 
-function hdsModel() {
-  if (!model) {
-    throw new Error("Initialize model with `initHDSModel()` first");
-  }
-  return model;
-}
-
 /**
  * Right after logging in:
  * Check if the account has the two forms
@@ -258,6 +249,7 @@ async function initDemoAccount(apiEndpoint) {
   const drConnectionInfo = await drConnection.accessInfo();
   console.log("## initDemoAccount - drConnectionInfo", drConnectionInfo);
   localStorage.setItem("user", drConnectionInfo.user.username);
+  await initHDSModel();
   appManaging = await appTemplates.AppManagingAccount.newFromConnection(
     APP_MANAGING_STREAMID,
     drConnection,
@@ -283,7 +275,7 @@ async function initDemoAccount(apiEndpoint) {
     }
     // 2 - get the permissions with eventual preRequest
     const preRequest = questionary.permissionsPreRequest || [];
-    const permissions = hdsModel().authorizations.forItemKeys(itemKeys, {
+    const permissions = getHDSModel().authorizations.forItemKeys(itemKeys, {
       preRequest,
     });
 
@@ -323,17 +315,6 @@ async function initDemoAccount(apiEndpoint) {
   await appManaging.setCustomSettings(defaultSettings);
   const settings = await appManaging.getCustomSettings();
   localStorage.setItem("settings", JSON.stringify(settings));
-}
-
-async function initHDSModel() {
-  if (!model) {
-    const service = new pryv.Service(serviceInfoUrl);
-    const serviceInfo = await service.info();
-    model = new HDSModel(serviceInfo.assets["hds-model"]);
-    console.log("## model", model);
-    await model.load();
-  }
-  return model;
 }
 
 function logout() {

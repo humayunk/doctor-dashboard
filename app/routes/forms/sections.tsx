@@ -1,51 +1,58 @@
-import { l } from "hds-lib-js";
+import { l, getHDSModel } from "hds-lib-js";
 import { useParams } from "react-router-dom";
-
-import { Tabbar } from "@/components/tabbar";
+import { QuestionnaryLayout } from "@/routes/layouts/QuestionnaryLayout";
+import type Collector from "hds-lib-js/types/appTemplates/Collector";
+import type HDSItemDef from "hds-lib-js/types/HDSModel/HDSItemDef";
 
 export default function Component() {
-  const { forms } = JSON.parse(localStorage.getItem("props"));
-  const { formId, sectionId: rawSectionId } = useParams();
-  const sectionId = rawSectionId.replace("section-", "");
-  const form = forms[formId];
-  const section = form[sectionId];
+  const { sectionId: rawSectionId } = useParams();
+  const sectionKey = (rawSectionId ?? "").replace("section-", "");
+  const model = getHDSModel();
   return (
-    <>
-      <article className="prose mb-4">
-        <h2 className="font-normal">{form.title}</h2>
-      </article>
-      <Tabbar tabs={form.tabs} />
-      <div className="m-4 ml-8">
-        <div className="m-4 prose ml-8">
-          <h2 className="font-normal">Profile (permanent)</h2>
-          <ul>
-            {section.itemDefs.map((itemDef) => (
-              <ItemDef key={itemDef.key} props={itemDef} />
-            ))}
-          </ul>
-        </div>
-      </div>
-    </>
+    <QuestionnaryLayout
+      render={(collector: Collector) => {
+        console.log('>>> Section:', {sectionKey, collector});
+        const appData = collector?.statusData.requestContent.app.data;
+        const sectionData = appData?.forms[sectionKey];
+        if (sectionData == null) {
+          return ( <> No Data .. </>);
+        }
+
+        return (
+          <div className="m-4 ml-8">
+            <div className="m-4 prose ml-8">
+              <h2 className="font-normal">Profile (permanent)</h2>
+              <ul>
+                {sectionData.itemKeys.map((itemKey: string) => {
+                  const itemDef = model.itemsDefs.forKey(itemKey);
+                  return (<ItemDef key={itemDef.key} itemDef={itemDef} />)
+                })}
+              </ul>
+            </div>
+          </div>
+        );
+      }}
+    />
   );
 }
 
-function ItemDef({ props: { key, label, options, type } }) {
-  if (type === "select" && options) {
+function ItemDef({ itemDef } : { itemDef: HDSItemDef }) {
+  if (itemDef.data.type === "select" && itemDef.data?.options) {
     return (
-      <li key={key}>
-        <span>{l(label)}:</span>
+      <li key={itemDef.key}>
+        <span>{itemDef.label}:</span>
         <ul>
-          {Object.entries(options).map(([key, title]) => (
-            <li key={key}>{l(title.label)}</li>
+          {Object.entries(itemDef.data.options as Record<string, { label: any }>).map(([optKey, opt]) => (
+            <li key={optKey}>{l(opt.label)}</li>
           ))}
         </ul>
       </li>
     );
   } else {
     return (
-      <li key={key}>
+      <li key={itemDef.key}>
         <span>
-          {l(label)} ({type})
+          {itemDef.label} ({itemDef.data.type})
         </span>
       </li>
     );
