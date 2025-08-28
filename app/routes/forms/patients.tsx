@@ -1,13 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { PatientsTable } from "@/components/patients";
+import { PatientsTable } from "@/components/PatientsTable";
 import { QuestionnaryLayout } from "@/routes/layouts/QuestionnaryLayout";
+import type Collector from "hds-lib-js/types/appTemplates/Collector";
 
 export default function Component() {
   const { t } = useTranslation();
   return (
     <QuestionnaryLayout
       render={(form: any, collector: Collector) => {
-        
+
         return (
           <>
             <article className="my-2 prose">
@@ -37,7 +38,7 @@ export default function Component() {
               </div>
             </form>
 
-            <PatientsTable props={form} />
+            <PatientsTable collector={collector} />
           </>
         )}
       }

@@ -2,25 +2,42 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 
 import { Header } from "@/components/table";
+import { useEffect, useState } from "react";
+import type Collector from "hds-lib-js/types/appTemplates/Collector";
+import type CollectorInvite from "hds-lib-js/types/appTemplates/CollectorInvite";
 
 const classes = "flex items-center gap-1";
 
-function Actions({ row }) {
+function Actions({ patient }: { patient: CollectorInvite}) {
   const { t } = useTranslation();
+  const [sharingLink, setSharingLink] = useState<string | null>(null);
+  useEffect(() => {
+    const loadLink = async () => {
+      if (patient.status !== "pending") return;
+      const inviteSharingData = await patient.getSharingData();
+      const patientURL = 'https://demo-forms.datasafe.dev/patient.html';
+      setSharingLink(`${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`);
+    };
+    loadLink();
+  },[patient, setSharingLink]);
+
   const aclasses =
     "font-medium text-blue-600 hover:underline dark:text-blue-500";
-  if (row.viewLink) {
+  if (patient.status === "active") {
     return (
-      <NavLink className={aclasses} to={row.viewLink}>
+      <NavLink className={aclasses} to={`/patients/${patient.collector.id}/${patient.key}`}>
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/folder-open-outline.svg" />{" "}
           {t("viewData")}
         </span>
       </NavLink>
     );
-  } else if (row.sharingLink) {
+  } else if (patient.status === "pending") {
+    if (sharingLink == null) {
+      return (<span className="flex items-center gap-3">{t('loading')}</span>);
+    }
     const subject = t("emailSubject");
-    const body = t("emailBody", { link: row.sharingLink });
+    const body = t("emailBody", { link: sharingLink });
     const href = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
     return (
       <span className="flex items-center gap-3">
@@ -30,7 +47,7 @@ function Actions({ row }) {
         <a
           className={aclasses}
           href="#"
-          onClick={() => handleClick(row.sharingLink)}
+          onClick={() => handleClick(sharingLink)}
         >
           <Copy />
         </a>
@@ -39,14 +56,14 @@ function Actions({ row }) {
   }
 }
 
-function Body({ data }) {
-  if (!data?.[0]) {
+function Body({ patients }: {patients: CollectorInvite[]}) {
+  if (!patients?.[0]) {
     return;
   }
   return (
     <tbody>
-      {data.map((row) => (
-        <TableBody key={Math.random()} row={row} />
+      {patients.map((patient) => (
+        <TableBody key={patient.key} patient={patient} />
       ))}
     </tbody>
   );
@@ -72,13 +89,29 @@ function Email() {
   );
 }
 
-function handleClick(link) {
+function handleClick(link: string) {
   navigator.clipboard.writeText(link);
   alert("Copied the sharing link to clipboard");
 }
 
-function PatientsTable({ props: { data } }) {
+function PatientsTable({ collector } : { collector: Collector}) {
   const { t } = useTranslation();
+  const [ patientsList, setPatientList ] = useState<CollectorInvite[]>([]);
+
+  useEffect(() => {
+    const loadPatients = async () => {
+      // check inbox for new incoming accepted requests
+        const newCollectorInvites = await collector.checkInbox();
+        console.log("## getPatients inbox ", newCollectorInvites);
+
+        // get all patients
+        const invites = await collector.getInvites();
+        invites.sort((a, b) => b.dateCreation.getTime() - a.dateCreation.getTime()); // sort by creation date reverse
+        setPatientList(invites);
+      };
+      loadPatients();
+  },[collector, patientsList]);
+
   const columns = [
     t("status"),
     t("patientReference"),
@@ -90,14 +123,14 @@ function PatientsTable({ props: { data } }) {
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
           <Header columns={columns} />
-          <Body data={data} />
+          <Body patients={patientsList} />
         </table>
       </div>
     </div>
   );
 }
 
-function Status({ status }) {
+function Status({ status }: { status: string}) {
   const { t } = useTranslation();
   switch (status) {
     case "active":
@@ -133,22 +166,22 @@ function Status({ status }) {
   }
 }
 
-function TableBody({ row }) {
+function TableBody({ patient }: {patient: CollectorInvite}) {
   return (
     <tr
       className="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-      key={row.reference}
+      key={patient.key}
     >
       <th
         className="px-6 py-4 font-medium whitespace-nowrap text-gray-900 dark:text-white"
         scope="row"
       >
-        <Status status={row.status} />
+        <Status status={patient.status} />
       </th>
-      <td className="px-6 py-4">{row.reference}</td>
-      <td className="px-6 py-4">{row.date}</td>
+      <td className="px-6 py-4">{patient.displayName}</td>
+      <td className="px-6 py-4">{patient.dateCreation.toLocaleString()}</td>
       <td className="px-6 py-4">
-        <Actions row={row} />
+        <Actions patient={patient} />
       </td>
     </tr>
   );

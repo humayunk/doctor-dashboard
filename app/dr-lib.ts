@@ -1,4 +1,4 @@
-import { appTemplates, HDSModel, l, pryv, initHDSModel, getHDSModel } from "hds-lib-js";
+import { appTemplates, l, pryv, initHDSModel, getHDSModel } from "hds-lib-js";
 import i18next from "i18next";
 
 /** The name of this application */
