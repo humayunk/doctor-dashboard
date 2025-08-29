@@ -11,11 +11,11 @@ export default function Component() {
   return (
     <QuestionnaryLayout
       render={(collector: Collector) => {
-        console.log('>>> Section:', {sectionKey, collector});
+        console.log(">>> Section:", { sectionKey, collector });
         const appData = collector?.statusData.requestContent.app.data;
         const sectionData = appData?.forms[sectionKey];
         if (sectionData == null) {
-          return ( <> No Data .. </>);
+          return <> No Data .. </>;
         }
 
         return (
@@ -25,7 +25,7 @@ export default function Component() {
               <ul>
                 {sectionData.itemKeys.map((itemKey: string) => {
                   const itemDef = model.itemsDefs.forKey(itemKey);
-                  return (<ItemDef key={itemDef.key} itemDef={itemDef} />)
+                  return <ItemDef key={itemDef.key} itemDef={itemDef} />;
                 })}
               </ul>
             </div>
@@ -36,13 +36,15 @@ export default function Component() {
   );
 }
 
-function ItemDef({ itemDef } : { itemDef: HDSItemDef }) {
+function ItemDef({ itemDef }: { itemDef: HDSItemDef }) {
   if (itemDef.data.type === "select" && itemDef.data?.options) {
     return (
       <li key={itemDef.key}>
         <span>{itemDef.label}:</span>
         <ul>
-          {Object.entries(itemDef.data.options as Record<string, { label: any }>).map(([optKey, opt]) => (
+          {Object.entries(
+            itemDef.data.options as Record<string, { label: any }>,
+          ).map(([optKey, opt]) => (
             <li key={optKey}>{l(opt.label)}</li>
           ))}
         </ul>

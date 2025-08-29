@@ -9,7 +9,7 @@ export default function Component() {
     <QuestionnaryLayout
       render={(collector: Collector) => {
         const { requestContent } = collector.statusData;
-          return (        
+        return (
           <div className="m-4 ml-8">
             <div className="m-4 prose ml-8">
               <h2 className="font-normal">{t("description")}</h2>
@@ -20,17 +20,19 @@ export default function Component() {
               <p>{t("permissionsExplanation")}</p>
               <h3 className="italic">{t("list")}</h3>
               <ul>
-              {
-                requestContent.permissions.map((p: any) => {
-                  if (!p.level) return (<></>);
-                  return (<li key={p.streamId + ' ' + p.level}>{p.defaultName} - {p.level}</li>);
-                })
-              }
+                {requestContent.permissions.map((p: any) => {
+                  if (!p.level) return <></>;
+                  return (
+                    <li key={p.streamId + " " + p.level}>
+                      {p.defaultName} - {p.level}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           </div>
-        )}
-      }
+        );
+      }}
     />
   );
 }

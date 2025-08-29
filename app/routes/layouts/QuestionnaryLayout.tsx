@@ -16,7 +16,10 @@ interface QuestionnaryLayoutProps {
   render?: (collector: Collector) => ReactNode;
 }
 
-export function QuestionnaryLayout({ children, render }: QuestionnaryLayoutProps): JSX.Element | null {
+export function QuestionnaryLayout({
+  children,
+  render,
+}: QuestionnaryLayoutProps): JSX.Element | null {
   const { formId } = useParams();
   const appManager = useMemo(() => getAppManaging(), []);
 
@@ -30,7 +33,7 @@ export function QuestionnaryLayout({ children, render }: QuestionnaryLayoutProps
       await col.init();
       setCollector(col);
       if (col == null) {
-        console.log('QL useffect', { col });
+        console.log("QL useffect", { col });
         throw new Error(`Cannot find collector with id ${formId}`);
       }
 
@@ -67,7 +70,3 @@ export function QuestionnaryLayout({ children, render }: QuestionnaryLayoutProps
     </>
   );
 }
-
-export default QuestionnaryLayout;
-
-

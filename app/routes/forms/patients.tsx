@@ -8,7 +8,6 @@ export default function Component() {
   return (
     <QuestionnaryLayout
       render={(collector: Collector) => {
-
         return (
           <>
             <article className="my-2 prose">
@@ -40,8 +39,8 @@ export default function Component() {
 
             <PatientsTable collector={collector} />
           </>
-        )}
-      }
+        );
+      }}
     />
   );
 }

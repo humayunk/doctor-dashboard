@@ -8,24 +8,29 @@ import type CollectorInvite from "hds-lib-js/types/appTemplates/CollectorInvite"
 
 const classes = "flex items-center gap-1";
 
-function Actions({ patient }: { patient: CollectorInvite}) {
+function Actions({ patient }: { patient: CollectorInvite }) {
   const { t } = useTranslation();
   const [sharingLink, setSharingLink] = useState<string | null>(null);
   useEffect(() => {
     const loadLink = async () => {
       if (patient.status !== "pending") return;
       const inviteSharingData = await patient.getSharingData();
-      const patientURL = 'https://demo-forms.datasafe.dev/patient.html';
-      setSharingLink(`${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`);
+      const patientURL = "https://demo-forms.datasafe.dev/patient.html";
+      setSharingLink(
+        `${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`,
+      );
     };
     loadLink();
-  },[patient]);
+  }, [patient]);
 
   const aclasses =
     "font-medium text-blue-600 hover:underline dark:text-blue-500";
   if (patient.status === "active") {
     return (
-      <NavLink className={aclasses} to={`/patients/${patient.collector.id}/${patient.key}`}>
+      <NavLink
+        className={aclasses}
+        to={`/patients/${patient.collector.id}/${patient.key}`}
+      >
         <span className={classes}>
           <img src="https://style.datasafe.dev/images/icons/folder-open-outline.svg" />{" "}
           {t("viewData")}
@@ -34,7 +39,7 @@ function Actions({ patient }: { patient: CollectorInvite}) {
     );
   } else if (patient.status === "pending") {
     if (sharingLink == null) {
-      return (<span className="flex items-center gap-3">{t('loading')}</span>);
+      return <span className="flex items-center gap-3">{t("loading")}</span>;
     }
     const subject = t("emailSubject");
     const body = t("emailBody", { link: sharingLink });
@@ -56,7 +61,7 @@ function Actions({ patient }: { patient: CollectorInvite}) {
   }
 }
 
-function Body({ patients }: {patients: CollectorInvite[]}) {
+function Body({ patients }: { patients: CollectorInvite[] }) {
   if (!patients?.[0]) {
     return;
   }
@@ -94,24 +99,26 @@ function handleClick(link: string) {
   alert("Copied the sharing link to clipboard");
 }
 
-function PatientsTable({ collector } : { collector: Collector}) {
+function PatientsTable({ collector }: { collector: Collector }) {
   const { t } = useTranslation();
-  const [ patientsList, setPatientList ] = useState<CollectorInvite[]>([]);
+  const [patientsList, setPatientList] = useState<CollectorInvite[]>([]);
 
   useEffect(() => {
     const loadPatients = async () => {
       // check inbox for new incoming accepted requests
-      console.log('Patient table use effects', { collector });
-        const newCollectorInvites = await collector.checkInbox();
-        console.log("## getPatients inbox ", newCollectorInvites);
+      console.log("Patient table use effects", { collector });
+      const newCollectorInvites = await collector.checkInbox();
+      console.log("## getPatients inbox ", newCollectorInvites);
 
-        // get all patients
-        const invites = await collector.getInvites();
-        invites.sort((a, b) => b.dateCreation.getTime() - a.dateCreation.getTime()); // sort by creation date reverse
-        setPatientList(invites);
-      };
-      loadPatients();
-  },[collector]);
+      // get all patients
+      const invites = await collector.getInvites();
+      invites.sort(
+        (a, b) => b.dateCreation.getTime() - a.dateCreation.getTime(),
+      ); // sort by creation date reverse
+      setPatientList(invites);
+    };
+    loadPatients();
+  }, [collector]);
 
   const columns = [
     t("status"),
@@ -131,7 +138,7 @@ function PatientsTable({ collector } : { collector: Collector}) {
   );
 }
 
-function Status({ status }: { status: string}) {
+function Status({ status }: { status: string }) {
   const { t } = useTranslation();
   switch (status) {
     case "active":
@@ -167,7 +174,7 @@ function Status({ status }: { status: string}) {
   }
 }
 
-function TableBody({ patient }: {patient: CollectorInvite}) {
+function TableBody({ patient }: { patient: CollectorInvite }) {
   return (
     <tr
       className="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
