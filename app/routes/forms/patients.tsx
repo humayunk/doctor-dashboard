@@ -7,7 +7,7 @@ export default function Component() {
   const { t } = useTranslation();
   return (
     <QuestionnaryLayout
-      render={(form: any, collector: Collector) => {
+      render={(collector: Collector) => {
 
         return (
           <>

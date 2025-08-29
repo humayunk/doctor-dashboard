@@ -13,7 +13,7 @@ interface QuestionnaryLayoutProps {
    * If true, QuestionnaryLayout will fetch and build form model from the manager
    * and expose it down to children via render prop.
    */
-  render?: (form: any, collector: Collector) => ReactNode;
+  render?: (collector: Collector) => ReactNode;
 }
 
 export function QuestionnaryLayout({ children, render }: QuestionnaryLayoutProps): JSX.Element | null {
@@ -29,12 +29,13 @@ export function QuestionnaryLayout({ children, render }: QuestionnaryLayoutProps
       const col = await appManager.getCollectorById(formId);
       await col.init();
       setCollector(col);
-      if (collector == null) {
+      if (col == null) {
+        console.log('QL useffect', { col });
         throw new Error(`Cannot find collector with id ${formId}`);
       }
 
       const formData: any = {};
-      const { requestContent } = collector.statusData;
+      const { requestContent } = col.statusData;
 
       formData.consent = l(requestContent.consent);
       formData.requester = requestContent.requester?.name;
@@ -62,7 +63,7 @@ export function QuestionnaryLayout({ children, render }: QuestionnaryLayoutProps
         <h2 className="font-normal">{form.title}</h2>
       </article>
       <Tabbar collector={collector} />
-      {render ? render(form, collector) : children}
+      {render ? render(collector) : children}
     </>
   );
 }

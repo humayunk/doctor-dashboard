@@ -19,7 +19,7 @@ function Actions({ patient }: { patient: CollectorInvite}) {
       setSharingLink(`${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`);
     };
     loadLink();
-  },[patient, setSharingLink]);
+  },[patient]);
 
   const aclasses =
     "font-medium text-blue-600 hover:underline dark:text-blue-500";
@@ -101,6 +101,7 @@ function PatientsTable({ collector } : { collector: Collector}) {
   useEffect(() => {
     const loadPatients = async () => {
       // check inbox for new incoming accepted requests
+      console.log('Patient table use effects', { collector });
         const newCollectorInvites = await collector.checkInbox();
         console.log("## getPatients inbox ", newCollectorInvites);
 
@@ -110,7 +111,7 @@ function PatientsTable({ collector } : { collector: Collector}) {
         setPatientList(invites);
       };
       loadPatients();
-  },[collector, patientsList]);
+  },[collector]);
 
   const columns = [
     t("status"),
