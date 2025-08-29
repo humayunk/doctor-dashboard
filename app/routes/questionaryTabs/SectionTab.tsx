@@ -4,7 +4,7 @@ import { QuestionnaryLayout } from "@/routes/layouts/QuestionnaryLayout";
 import type Collector from "hds-lib-js/types/appTemplates/Collector";
 import type HDSItemDef from "hds-lib-js/types/HDSModel/HDSItemDef";
 
-export default function Component() {
+export default function SectionTab() {
   const { sectionId: rawSectionId } = useParams();
   const sectionKey = (rawSectionId ?? "").replace("section-", "");
   const model = getHDSModel();

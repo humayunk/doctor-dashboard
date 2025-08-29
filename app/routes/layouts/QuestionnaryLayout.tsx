@@ -1,9 +1,10 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-
 import { Tabbar } from "@/components/tabbar";
+
 import { getAppManaging } from "@/dr-lib";
 import { l } from "hds-lib-js";
+
 import type { JSX } from "react/jsx-runtime";
 import type Collector from "hds-lib-js/types/appTemplates/Collector";
 
@@ -20,50 +21,29 @@ export function QuestionnaryLayout({
   children,
   render,
 }: QuestionnaryLayoutProps): JSX.Element | null {
-  const { formId } = useParams();
+  const { questionaryId } = useParams();
   const appManager = useMemo(() => getAppManaging(), []);
-
-  const [form, setForm] = useState<any>({ tabs: null, title: "" });
   const [collector, setCollector] = useState<Collector | null>(null);
 
   useEffect(() => {
-    const loadForm = async () => {
-      if (!formId) return;
-      const col = await appManager.getCollectorById(formId);
+    const loadCollector = async () => {
+      if (!questionaryId) return;
+      const col = await appManager.getCollectorById(questionaryId);
       await col.init();
       setCollector(col);
       if (col == null) {
-        console.log("QL useffect", { col });
-        throw new Error(`Cannot find collector with id ${formId}`);
+        throw new Error(`Cannot find collector with id ${questionaryId}`);
       }
-
-      const formData: any = {};
-      const { requestContent } = col.statusData;
-
-      formData.consent = l(requestContent.consent);
-      formData.requester = requestContent.requester?.name;
-      formData.description = l(requestContent.description);
-      formData.permissions = {};
-      if (requestContent.permissions) {
-        formData.permissions.read = requestContent.permissions
-          .filter((p: any) => p.level === "read")
-          .map((p: any) => p.defaultName);
-      }
-      formData.title = l(requestContent.title);
-
-      formData.raw = requestContent;
-
-      setForm(formData);
     };
-    loadForm();
-  }, [appManager, formId]);
+    loadCollector();
+  }, [appManager, questionaryId]);
 
   if (collector == null) return <>Loading...</>;
 
   return (
     <>
       <article className="prose mb-4">
-        <h2 className="font-normal">{form.title}</h2>
+        <h2 className="font-normal">{l(collector.statusData.requestContent.title)}</h2>
       </article>
       <Tabbar collector={collector} />
       {render ? render(collector) : children}

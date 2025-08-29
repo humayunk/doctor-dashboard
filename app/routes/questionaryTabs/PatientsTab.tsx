@@ -3,7 +3,7 @@ import { PatientsTable } from "@/components/PatientsTable";
 import { QuestionnaryLayout } from "@/routes/layouts/QuestionnaryLayout";
 import type Collector from "hds-lib-js/types/appTemplates/Collector";
 
-export default function Component() {
+export default function PatientsTab() {
   const { t } = useTranslation();
   return (
     <QuestionnaryLayout

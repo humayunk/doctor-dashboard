@@ -3,7 +3,7 @@ import { QuestionnaryLayout } from "@/routes/layouts/QuestionnaryLayout";
 import type Collector from "hds-lib-js/types/appTemplates/Collector";
 import { l } from "hds-lib-js";
 
-export default function Component() {
+export default function DetailsTab() {
   const { t } = useTranslation();
   return (
     <QuestionnaryLayout

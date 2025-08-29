@@ -85,21 +85,21 @@ function getAppManaging(): appTemplates.AppManagingAccount {
   return appManaging;
 }
 
-function getLineForEvent(event) {
+export function getLineForEvent(event: pryv.Event) {
   const line = {
-    description: "",
     formLabel: "Unknown",
     formType: "Unknown",
     repeatable: "any",
     streamAndType: event.streamId + " - " + event.type,
-    time: new Date(event.time * 1000).toISOString(),
+    time: new Date(event.time * 1000).toLocaleString(),
     value: JSON.stringify(event.content),
+    streamId: event.streamIds[0],
+    eventType: event.type,
   };
 
   const itemDef = getHDSModel().itemsDefs.forEvent(event, false);
+  
   if (itemDef) {
-    line.streamId = event.streamIds[0];
-    line.eventType = event.type;
     line.formLabel = itemDef.label;
     line.formType = itemDef.data.type;
     line.repeatable = itemDef.data.repeatable;
@@ -108,20 +108,22 @@ function getLineForEvent(event) {
     }
     if (line.formType === "select") {
       line.value = event.content;
+      let valueForSelect = event.content;
       if (event.type === "ratio/generic") {
-        line.value = event.content.value;
+        line.value = event.content.value + '/' + event.content.relativeTo;
+        valueForSelect = event.content.value;
       }
 
-      const selected = itemDef.data.options.find((o) => o.value === line.value);
-      line.description = selected != null ? l(selected.label) : "-";
+      console.log('ItemDef Options', itemDef.data.options, event.content)
+      const selected = itemDef.data.options.find((o) => o.value === valueForSelect);
+      line.value = selected != null ? l(selected.label) : "-";
     }
     if (line.formType === "checkbox") {
       if (event.type === "activity/plain") {
-        line.description = "Yes";
-        line.value = "x";
+        line.value = "Yes";
       }
     }
-    if (event.streamId === "body-weight") {
+    if (event.streamId === "body-weight" && event.type.startsWith('mass/')) {
       const units = event.type.split("/").pop();
       line.value = `${line.value} ${units}`;
     }
