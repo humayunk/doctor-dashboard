@@ -43,7 +43,9 @@ export function QuestionnaryLayout({
   return (
     <>
       <article className="prose mb-4">
-        <h2 className="font-normal">{l(collector.statusData.requestContent.title)}</h2>
+        <h2 className="font-normal">
+          {l(collector.statusData.requestContent.title)}
+        </h2>
       </article>
       <Tabbar collector={collector} />
       {render ? render(collector) : children}

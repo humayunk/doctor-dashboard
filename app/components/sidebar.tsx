@@ -20,17 +20,20 @@ function FormEntry({ href, name }) {
   );
 }
 
-function getId(path) {
+function getId(path: string) {
   return path.split("/")[2];
 }
 
-function Sidebar({ user }) {
+function Sidebar() {
   const { t } = useTranslation();
-  const appManager = getAppManaging();
-  const [forms, setForms] = useState([]);
+  const appManaging = getAppManaging();
+  const [forms, setForms] = useState<{ href: string; id: string; name: string; }[]>([]);
+  const [username, setUsername] = useState('');
+
   useEffect(() => {
     const updateForms = async () => {
-      const collectors = await appManager.getCollectors();
+      if (appManaging == null) return;
+      const collectors = await appManaging.getCollectors();
       const forms = [];
       for (const collector of collectors) {
         forms.push({
@@ -41,10 +44,13 @@ function Sidebar({ user }) {
       }
       console.log("###forms", forms);
       setForms(forms);
+      const drConnectionInfo = await appManaging.connection.accessInfo();
+      setUsername(drConnectionInfo.user.username + '');
+
     };
 
     updateForms();
-  }, [appManager]);
+  }, [appManaging]);
 
   return (
     <>
@@ -119,7 +125,7 @@ function Sidebar({ user }) {
               >
                 <img src="https://style.datasafe.dev/images/icons/arrow-left-to-bracket.svg" />
                 <span className="ms-3 flex-1 whitespace-nowrap dark:text-gray-300">
-                  {user}: {t("logOut")}
+                  {username}: {t("logOut")}
                 </span>
               </NavLink>
             </li>

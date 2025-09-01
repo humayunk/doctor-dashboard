@@ -98,7 +98,7 @@ export function getLineForEvent(event: pryv.Event) {
   };
 
   const itemDef = getHDSModel().itemsDefs.forEvent(event, false);
-  
+
   if (itemDef) {
     line.formLabel = itemDef.label;
     line.formType = itemDef.data.type;
@@ -110,12 +110,14 @@ export function getLineForEvent(event: pryv.Event) {
       line.value = event.content;
       let valueForSelect = event.content;
       if (event.type === "ratio/generic") {
-        line.value = event.content.value + '/' + event.content.relativeTo;
+        line.value = event.content.value + "/" + event.content.relativeTo;
         valueForSelect = event.content.value;
       }
 
-      console.log('ItemDef Options', itemDef.data.options, event.content)
-      const selected = itemDef.data.options.find((o) => o.value === valueForSelect);
+      console.log("ItemDef Options", itemDef.data.options, event.content);
+      const selected = itemDef.data.options.find(
+        (o) => o.value === valueForSelect,
+      );
       line.value = selected != null ? l(selected.label) : "-";
     }
     if (line.formType === "checkbox") {
@@ -123,7 +125,7 @@ export function getLineForEvent(event: pryv.Event) {
         line.value = "Yes";
       }
     }
-    if (event.streamId === "body-weight" && event.type.startsWith('mass/')) {
+    if (event.streamId === "body-weight" && event.type.startsWith("mass/")) {
       const units = event.type.split("/").pop();
       line.value = `${line.value} ${units}`;
     }

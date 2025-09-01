@@ -31,36 +31,42 @@ export default function Component() {
       // invite (patient)
       const invite = await col.getInviteByKey(inviteId);
       if (col == null) {
-        throw new Error(`Cannot find invite with id "${inviteId}" for collector "${questionaryId}"`);
+        throw new Error(
+          `Cannot find invite with id "${inviteId}" for collector "${questionaryId}"`,
+        );
       }
 
       // patient Data
       const contentData = {
         name: invite.eventData.content.name,
-        nonRepeatableData: [] as {label: string, value: string}[],
-        repeatableDataRows: [] as {date: string, label: string, value: string }[]
-      }
+        nonRepeatableData: [] as { label: string; value: string }[],
+        repeatableDataRows: [] as {
+          date: string;
+          label: string;
+          value: string;
+        }[],
+      };
       function forEachEvent(event: pryv.Event) {
         const line = getLineForEvent(event);
-        console.log('>> Event patiendata', event);
+        console.log(">> Event patiendata", event);
 
-        if (line.repeatable === 'none') {
+        if (line.repeatable === "none") {
           contentData.nonRepeatableData.push({
             label: line.formLabel,
-            value: line.value
+            value: line.value,
           });
         } else {
           contentData.repeatableDataRows.push({
             date: line.time,
             label: line.formLabel,
-            value: line.value
+            value: line.value,
           });
         }
       }
 
       // will load events
       await invite.connection.getEventsStreamed({ limit: 10000 }, forEachEvent);
-      console.log('>> Event patiendata Done');
+      console.log(">> Event patiendata Done");
       setPatientData(contentData);
     };
     loadCollector();
@@ -73,15 +79,17 @@ export default function Component() {
 
   const tableData = {
     columns: [i18next.t("date"), i18next.t("label"), i18next.t("value")],
-    data: patientData.repeatableDataRows
-  }
+    data: patientData.repeatableDataRows,
+  };
 
-  console.log('### tableData', tableData);
+  console.log("### tableData", tableData);
 
   return (
     <>
       <article className="prose mb-4">
-        <h2 className="font-normal">{l(collector.statusData.requestContent.title)}</h2>
+        <h2 className="font-normal">
+          {l(collector.statusData.requestContent.title)}
+        </h2>
         <h3 className="italic">
           {t("dataFor")} {patientData.name}
         </h3>
@@ -93,9 +101,11 @@ export default function Component() {
         </NavLink>
       </article>
       <div className="m-4 grid grid-cols-1 grid-rows-1 md:grid-cols-3">
-        {patientData.nonRepeatableData.map((info: {label: string, value: string}) => (
-          <Card info={info} key={info.label} />
-        ))}
+        {patientData.nonRepeatableData.map(
+          (info: { label: string; value: string }) => (
+            <Card info={info} key={info.label} />
+          ),
+        )}
       </div>
       <Table props={tableData} />
     </>

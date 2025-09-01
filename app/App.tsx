@@ -18,8 +18,14 @@ export default function App() {
           <Route element={<Welcome />} path="forms" />
           <Route element={<Details />} path="forms/:questionaryId/details" />
           <Route element={<Patients />} path="forms/:questionaryId/patients" />
-          <Route element={<Sections />} path="forms/:questionaryId/:sectionId" />
-          <Route element={<Patient />} path="patients/:questionaryId/:inviteId" />
+          <Route
+            element={<Sections />}
+            path="forms/:questionaryId/:sectionId"
+          />
+          <Route
+            element={<Patient />}
+            path="patients/:questionaryId/:inviteId"
+          />
           <Route element={<Settings />} path="settings" />
         </Route>
       </Routes>
