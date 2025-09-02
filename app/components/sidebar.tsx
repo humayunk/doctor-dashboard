@@ -27,8 +27,10 @@ function getId(path: string) {
 function Sidebar() {
   const { t } = useTranslation();
   const appManaging = getAppManaging();
-  const [forms, setForms] = useState<{ href: string; id: string; name: string; }[]>([]);
-  const [username, setUsername] = useState('');
+  const [forms, setForms] = useState<
+    { href: string; id: string; name: string }[]
+  >([]);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     const updateForms = async () => {
@@ -45,8 +47,7 @@ function Sidebar() {
       console.log("###forms", forms);
       setForms(forms);
       const drConnectionInfo = await appManaging.connection.accessInfo();
-      setUsername(drConnectionInfo.user.username + '');
-
+      setUsername(drConnectionInfo.user.username + "");
     };
 
     updateForms();

@@ -2,19 +2,18 @@ import { getAppManaging } from "@/dr-lib";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-const DEFAULT_LANGUAGE = 'en';
+const DEFAULT_LANGUAGE = "en";
 const DEFAULT_THEME = window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";;
+  ? "dark"
+  : "light";
 
 export default function Component() {
   const appManaging = getAppManaging();
   const { t } = useTranslation();
   const [settings, setSettings] = useState<any | null>({
     language: DEFAULT_LANGUAGE,
-    theme: DEFAULT_THEME
+    theme: DEFAULT_THEME,
   });
-
 
   const languageOptions = [
     { text: "English", value: "en" },
@@ -25,20 +24,18 @@ export default function Component() {
     { text: t("lightMode"), value: "light" },
   ];
 
-
   const switchTheme = (event) => {
-    saveSettings('theme', event.target.value);
+    saveSettings("theme", event.target.value);
   };
 
   const switchLng = async (event) => {
-    saveSettings('language', event.target.value);
+    saveSettings("language", event.target.value);
   };
 
   async function saveSettings(key: string, value: any) {
     setSettings({ ...settings, [key]: value });
-    await appManaging.setCustomSettings({...settings});
+    await appManaging.setCustomSettings({ ...settings });
   }
-  
 
   // settings loader
   useEffect(() => {
@@ -47,15 +44,15 @@ export default function Component() {
       setSettings(appSettings);
     };
     loadSettings();
-  }, [appManaging])
+  }, [appManaging]);
 
   // update UI on state change
   useEffect(() => {
     document.body.setAttribute("data-theme", settings.theme);
-    if (settings.theme === 'dark') {
-      document.documentElement.classList.add('dark');
+    if (settings.theme === "dark") {
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   }, [settings]);
 

@@ -1,5 +1,4 @@
 import { appTemplates, l, pryv, initHDSModel, getHDSModel } from "hds-lib-js";
-import i18next from "i18next";
 
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
@@ -9,8 +8,7 @@ const APP_MANAGING_STREAMID = "app-dr-hds";
 let appManaging: appTemplates.AppManagingAccount;
 /** Marked as "OLD" but still seems necessary */
 let drConnection = null;
-/** unified data model */
-const props = { forms: { summary: [] } };
+
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
 const serviceInfoUrl = "https://demo.datasafe.dev/reg/service/info";
 
@@ -133,116 +131,6 @@ export function getLineForEvent(event: pryv.Event) {
   return line;
 }
 
-async function getPatientData(invite) {
-  const patientData = [];
-  const queryParams = { limit: 10000 };
-  function forEachEvent(event) {
-    patientData.push(getLineForEvent(event));
-  }
-
-  await invite.connection.getEventsStreamed(queryParams, forEachEvent);
-  return patientData;
-}
-
-async function getPatients(collector) {
-  // check inbox for new incoming accepted requests
-  const newCollectorInvites = await collector.checkInbox();
-  console.log("## getPatients inbox ", newCollectorInvites);
-
-  // get all patients
-  const patients = await collector.getInvites();
-  const activePatients = [];
-  patients.sort((a, b) => b.dateCreation - a.dateCreation); // sort by creation date reverse
-  for (const patient of patients) {
-    if (patient.status === "active") {
-      patient.viewLink = `/patients/${collector.streamId}/${patient.key}`;
-      activePatients.push([collector.streamId, patient.key]);
-    } else if (patient.status === "pending") {
-      const inviteSharingData = await patient.getSharingData();
-      const patientURL = "https://whatever.backloop.dev:4443/patient.html";
-      patient.sharingLink = `${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`;
-    }
-  }
-  console.log("## getPatients patients ", patients);
-
-  activePatients.forEach(([collectorId, inviteKey]) =>
-    showPatientDetails(collectorId, inviteKey),
-  );
-
-  return patients;
-}
-
-async function getQuestionnaryDetails(questionaryId) {
-  const form = {};
-
-  const am = getAppManaging();
-  const collector = await am.getCollectorById(questionaryId);
-  await collector.init(); // load controller data only when needed
-  // show details
-  const { requestContent } = collector.statusData;
-  form.consent = l(requestContent.consent);
-  form.requester = requestContent.requester?.name;
-  form.description = l(requestContent.description);
-  form.permissions = {};
-  if (requestContent.permissions) {
-    form.permissions.read = requestContent.permissions
-      .filter((p) => p.level === "read")
-      .map((p) => p.defaultName);
-  }
-  form.title = l(requestContent.title);
-
-  const patients = await getPatients(collector);
-  form.data = patients.map((x) => ({
-    date: x.dateCreation.toLocaleString(),
-    reference: x.displayName ?? x.inviteName,
-    sharingLink: x.sharingLink,
-    status: x.status,
-    viewLink: x.viewLink,
-  }));
-
-  const base = `/forms/${collector.id}`;
-  const tabs = [
-    { href: `${base}/patients`, label: i18next.t("patients") },
-    { href: `${base}/details`, label: i18next.t("formDetails") },
-  ];
-
-  const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
-  const forms = requestContent.app?.data?.forms
-    ? Object.values(requestContent.app.data.forms)
-    : [];
-  for (const [key] of Object.entries(keyTitles)) {
-    for (const f of forms) {
-      const id = f.key;
-      const title = f.name;
-      if (key === "itemKeys") {
-        form[id] = { title: title };
-        switch (f.type) {
-          case "permanent":
-            form[id].type = i18next.t("permanent");
-            break;
-          case "recurring":
-            form[id].type = i18next.t("recurring");
-            break;
-          default:
-            form[id].type = f.type;
-        }
-        form[id].itemDefs = f.itemKeys.map((itemKey) => {
-          const itemDef = getHDSModel().itemsDefs.forKey(itemKey);
-          return itemDef.data;
-        });
-      } else if (key === "name") {
-        tabs.push({
-          href: `${base}/section-${id}`,
-          label: `${i18next.t("section")} ${title}`,
-        });
-      }
-    }
-  }
-
-  form.tabs = tabs;
-  return form;
-}
-
 /**
  * Right after logging in:
  * Check if the account has the two forms
@@ -251,8 +139,6 @@ async function getQuestionnaryDetails(questionaryId) {
 async function initDemoAccount(apiEndpoint) {
   drConnection = await connectAPIEndpoint(apiEndpoint);
   const drConnectionInfo = await drConnection.accessInfo();
-  console.log("## initDemoAccount - drConnectionInfo", drConnectionInfo);
-  localStorage.setItem("user", drConnectionInfo.user.username);
   await initHDSModel();
   appManaging = await appTemplates.AppManagingAccount.newFromConnection(
     APP_MANAGING_STREAMID,
@@ -313,32 +199,10 @@ async function initDemoAccount(apiEndpoint) {
     console.log("## initDemoAccount published", newCollector);
   }
   console.log("## initDemoAccount with", collectors);
-
-  // TODO: Make this work
-  const defaultSettings = { lang: "en", theme: "dark" };
-  await appManaging.setCustomSettings(defaultSettings);
-  const settings = await appManaging.getCustomSettings();
-  localStorage.setItem("settings", JSON.stringify(settings));
 }
 
 function logout() {
-  localStorage.clear();
   console.log("## logout");
-}
-
-async function setQuestionnaries() {
-  const am = getAppManaging();
-  const collectors = await am.getCollectors();
-  for (const collector of collectors) {
-    props.forms.summary.push({
-      href: `/forms/${collector.id}/patients`,
-      id: collector.id,
-      name: collector.name,
-    });
-    const details = await getQuestionnaryDetails(collector.id);
-    props.forms[collector.id] = details;
-  }
-  localStorage.setItem("props", JSON.stringify(props));
 }
 
 function showLoginButton(loginSpanId, stateChangeCallBack) {
@@ -391,35 +255,4 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
   }
 }
 
-async function showPatientDetails(collectorId, inviteKey) {
-  // get app from state management
-  const am = getAppManaging();
-  const collector = await am.getCollectorById(collectorId);
-  const invite = await collector.getInviteByKey(inviteKey);
-  console.log("## loaded with invite", invite);
-
-  const lines = await getPatientData(invite);
-  const entries = Object.entries(lines);
-  props[inviteKey] = {
-    columns: [i18next.t("date"), i18next.t("label"), i18next.t("value")],
-    name: invite.eventData.content.name,
-  };
-  props[inviteKey].data = entries
-    .filter(([, v]) => v.repeatable !== "none")
-    .map(([, v]) => ({
-      date: v.time,
-      label: v.formLabel,
-      value: (v.description ?? v.value).replace(/"/g, ""),
-    }));
-  props[inviteKey].info = entries
-    .filter(([, v]) => v.repeatable === "none")
-    .reverse()
-    .map(([, v]) => ({
-      label: v.formLabel,
-      value: (v.description ?? v.value).replace(/"/g, ""),
-    }));
-  console.log("## props", props);
-  localStorage.setItem("props", JSON.stringify(props));
-}
-
-export { getAppManaging, logout, setQuestionnaries, showLoginButton };
+export { getAppManaging, logout, showLoginButton };

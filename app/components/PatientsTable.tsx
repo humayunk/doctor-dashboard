@@ -108,7 +108,7 @@ function PatientsTable({ collector }: { collector: Collector }) {
       // check inbox for new incoming accepted requests
       console.log("Patient table use effects", { collector });
       const newCollectorInvites = await collector.checkInbox();
-      console.log("## getPatients inbox ", newCollectorInvites);
+      console.log("## new patients inbox ", newCollectorInvites);
 
       // get all patients
       const invites = await collector.getInvites();

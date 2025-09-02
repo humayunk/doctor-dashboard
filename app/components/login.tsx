@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { setQuestionnaries, showLoginButton } from "@/dr-lib";
+import { showLoginButton } from "@/dr-lib";
 
 export function Login() {
   const navigate = useNavigate();
@@ -9,7 +9,6 @@ export function Login() {
   useEffect(() => {
     showLoginButton("login-button", async (state: string) => {
       if (state === "loggedIN") {
-        await setQuestionnaries();
         navigate("/forms");
       }
     });
