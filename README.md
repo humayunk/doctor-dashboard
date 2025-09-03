@@ -4,10 +4,10 @@
 
 ### Installation
 
-Install the dependencies:
+Install the dependencies and clones the `gh-pages` branch into `dist` for publishing
 
 ```bash
-npm install
+npm run setup
 ```
 
 ### Development

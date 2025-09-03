@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "setup": "sh ./scripts/setup.sh",
     "build": "vite build",
     "dev": "vite",
     "format": "npx prettier . --check",
