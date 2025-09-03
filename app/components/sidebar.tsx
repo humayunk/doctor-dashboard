@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
-
-import { getAppManaging } from "@/dr-lib";
-import { logout } from "@/dr-lib";
+import { useAppContext } from "@/context/AppContext";
 
 function FormEntry({ href, name }) {
   const isCurrent = getId(window.location.pathname) === getId(href);
@@ -26,11 +24,15 @@ function getId(path: string) {
 
 function Sidebar() {
   const { t } = useTranslation();
-  const appManaging = getAppManaging();
+  const { appManaging, updateAppManaging } = useAppContext();
   const [forms, setForms] = useState<
     { href: string; id: string; name: string }[]
   >([]);
   const [username, setUsername] = useState("");
+
+  function logout() {
+    updateAppManaging(null);
+  }
 
   useEffect(() => {
     const updateForms = async () => {

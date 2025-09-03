@@ -249,4 +249,4 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
   }
 }
 
-export { getAppManaging, logout, showLoginButton };
+export { getAppManaging, showLoginButton };

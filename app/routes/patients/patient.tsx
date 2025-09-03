@@ -8,21 +8,22 @@ import { Table } from "@/components/table";
 import i18next from "i18next";
 
 import { l, type pryv } from "hds-lib-js";
-import { getAppManaging, getLineForEvent } from "@/dr-lib";
+import { getLineForEvent } from "@/dr-lib";
 
 import type Collector from "hds-lib-js/types/appTemplates/Collector";
+import { useAppContext } from "@/context/AppContext";
 
 export default function Component() {
   const { t } = useTranslation();
   const { questionaryId, inviteId } = useParams<string>();
-  const appManager = getAppManaging();
+  const { appManaging } = useAppContext();
   const [collector, setCollector] = useState<Collector | null>(null);
   const [patientData, setPatientData] = useState<any>(null);
 
   useEffect(() => {
     const loadCollector = async () => {
-      if (!questionaryId || !inviteId) return;
-      const col = await appManager.getCollectorById(questionaryId);
+      if (!questionaryId || !inviteId || !appManaging) return;
+      const col = await appManaging.getCollectorById(questionaryId);
       await col.init();
       setCollector(col);
       if (col == null) {
@@ -70,7 +71,7 @@ export default function Component() {
       setPatientData(contentData);
     };
     loadCollector();
-  }, [appManager, questionaryId, inviteId]);
+  }, [appManaging, questionaryId, inviteId]);
 
   const back = `/forms/${questionaryId}/patients`;
   const content = t("backToForm");

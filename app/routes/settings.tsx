@@ -1,4 +1,4 @@
-import { getAppManaging } from "@/dr-lib";
+import { useAppContext } from "@/context/AppContext";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,7 +8,7 @@ const DEFAULT_THEME = window.matchMedia("(prefers-color-scheme: dark)").matches
   : "light";
 
 export default function Component() {
-  const appManaging = getAppManaging();
+  const { appManaging } = useAppContext();
   const { t } = useTranslation();
   const [settings, setSettings] = useState<any | null>({
     language: DEFAULT_LANGUAGE,
