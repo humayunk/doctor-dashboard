@@ -1,14 +1,20 @@
+import { useAppContext } from "@/context/AppContext";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import type { Route } from "./+types/settings";
-
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  return { fid: params.formId, iid: params.inviteId };
-}
+const DEFAULT_LANGUAGE = "en";
+const DEFAULT_THEME = window.matchMedia("(prefers-color-scheme: dark)").matches
+  ? "dark"
+  : "light";
 
 export default function Component() {
+  const { appManaging } = useAppContext();
   const { t } = useTranslation();
+  const [settings, setSettings] = useState<any | null>({
+    language: DEFAULT_LANGUAGE,
+    theme: DEFAULT_THEME,
+  });
+
   const languageOptions = [
     { text: "English", value: "en" },
     { text: "Español", value: "es" },
@@ -18,31 +24,37 @@ export default function Component() {
     { text: t("lightMode"), value: "light" },
   ];
 
-  const defaultTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-  const dataTheme = localStorage.getItem("dataTheme") ?? defaultTheme;
-  const [theme, setTheme] = useState(dataTheme);
   const switchTheme = (event) => {
-    setTheme(event.target.value);
+    saveSettings("theme", event.target.value);
   };
 
-  const defaultLang = localStorage.getItem("i18nextLng") ?? "en";
-  const [lng, setLng] = useState(defaultLang);
-  const switchLng = (event) => {
-    setLng(event.target.value);
+  const switchLng = async (event) => {
+    saveSettings("language", event.target.value);
   };
 
+  async function saveSettings(key: string, value: any) {
+    setSettings({ ...settings, [key]: value });
+    await appManaging.setCustomSettings({ ...settings });
+  }
+
+  // settings loader
   useEffect(() => {
-    localStorage.setItem("i18nextLng", lng);
-    localStorage.setItem("dataTheme", theme);
-    document.body.setAttribute("data-theme", theme);
-    if (theme === "dark") {
+    const loadSettings = async () => {
+      const appSettings = await appManaging.getCustomSettings();
+      setSettings(appSettings);
+    };
+    loadSettings();
+  }, [appManaging]);
+
+  // update UI on state change
+  useEffect(() => {
+    document.body.setAttribute("data-theme", settings.theme);
+    if (settings.theme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, [lng, theme]);
+  }, [settings]);
 
   return (
     <>
@@ -61,7 +73,7 @@ export default function Component() {
           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
           id="languageSelect"
           onChange={switchLng}
-          value={lng}
+          value={settings.language}
         >
           {languageOptions.map(({ text, value }) => (
             <option key={value} value={value}>
@@ -79,7 +91,7 @@ export default function Component() {
           className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
           id="themeSelect"
           onChange={switchTheme}
-          value={theme}
+          value={settings.theme}
         >
           {themeOptions.map(({ text, value }) => (
             <option key={value} value={value}>

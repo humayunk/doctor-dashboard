@@ -4,10 +4,10 @@
 
 ### Installation
 
-Install the dependencies:
+Install the dependencies and clones the `gh-pages` branch into `dist` for publishing
 
 ```bash
-npm install
+npm run setup
 ```
 
 ### Development
@@ -28,10 +28,13 @@ Create a production build:
 npm run build
 ```
 
+## Questions
+
+- Why using the package `isbot` ?
+
 ## Technology Choices
 
 - [ESLint](https://eslint.org/): linting, with the following plugins:
-  - [Perfectionist](https://perfectionist.dev/)
 - [Flowbite](https://flowbite.com/): aesthetically pleasing component development
 - [HDS Lib](https://github.com/healthdatasafe/hds-lib-js): the "backend" for this client app
 - [Husky](https://typicode.github.io/husky/): easy pre-commit hook enforcement

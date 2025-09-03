@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
+import { useAppContext } from "@/context/AppContext";
 
-import { logout } from "@/dr-lib";
+import { getAppManaging, showLoginButton } from "@/dr-lib";
 
 function FormEntry({ href, name }) {
   const isCurrent = getId(window.location.pathname) === getId(href);
@@ -18,15 +20,48 @@ function FormEntry({ href, name }) {
   );
 }
 
-function getId(path) {
+function getId(path: string) {
   return path.split("/")[2];
 }
 
-function Sidebar({ user }) {
+function Sidebar() {
   const { t } = useTranslation();
-  const props = JSON.parse(localStorage.getItem("props"));
-  props.forms ??= { summary: [] };
-  const forms = props.forms.summary;
+  const { appManaging, updateAppManaging } = useAppContext();
+  const [forms, setForms] = useState<
+    { href: string; id: string; name: string }[]
+  >([]);
+
+  useEffect(() => {
+    showLoginButton("login-button", async (state: string) => {
+      updateAppManaging(getAppManaging());
+      console.log("=== signing button new state", state);
+      if (state === "loggedIN") {
+        // navigate("/forms");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const updateForms = async () => {
+      console.log("Effect: Update forms");
+      const forms = [];
+      if (appManaging != null) {
+        const collectors = await appManaging.getCollectors();
+        for (const collector of collectors) {
+          forms.push({
+            href: `/forms/${collector.id}/patients`,
+            id: collector.id,
+            name: collector.name,
+          });
+        }
+      }
+      console.log("###forms", forms);
+      setForms(forms);
+    };
+
+    updateForms();
+  }, [appManaging]);
+
   return (
     <>
       <button
@@ -93,16 +128,7 @@ function Sidebar({ user }) {
               </NavLink>
             </li>
             <li>
-              <NavLink
-                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                onClick={logout}
-                to="/"
-              >
-                <img src="https://style.datasafe.dev/images/icons/arrow-left-to-bracket.svg" />
-                <span className="ms-3 flex-1 whitespace-nowrap dark:text-gray-300">
-                  {user}: {t("logOut")}
-                </span>
-              </NavLink>
+              <span id="login-button"></span>
             </li>
           </ul>
         </div>

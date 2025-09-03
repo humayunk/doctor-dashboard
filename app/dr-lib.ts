@@ -1,18 +1,12 @@
-import { appTemplates, HDSModel, l, pryv } from "hds-lib-js";
-import i18next from "i18next";
+import { appTemplates, l, pryv, initHDSModel, getHDSModel } from "hds-lib-js";
 
 /** The name of this application */
 const APP_MANAGING_NAME = "HDS Dr App PoC";
 /** The "base" stream for this App */
 const APP_MANAGING_STREAMID = "app-dr-hds";
 /** initialized during pryvAuthStateChange */
-let appManaging;
-/** Marked as "OLD" but still seems necessary */
-let drConnection = null;
-/** from common-lib.js */
-let model;
-/** unified data model */
-const props = { forms: { summary: [] } };
+let appManaging: appTemplates.AppManagingAccount | null;
+
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
 const serviceInfoUrl = "https://demo.datasafe.dev/reg/service/info";
 
@@ -70,38 +64,27 @@ const v2 = {
 };
 
 /**
- * Return pryv.Connection with property HDSModel Loaded
- * @param {string} apiEndpoint
- * @returns
+ * exposes appManaging to the app
  */
-async function connectAPIEndpoint(apiEndpoint) {
-  const connection = new pryv.Connection(apiEndpoint);
-  connection.hdsModel = await initHDSModel();
-  return connection;
-}
-
-/**
- * exposes appManaging for the app
- */
-function getAppManaging() {
+function getAppManaging(): appTemplates.AppManagingAccount | null {
   return appManaging;
 }
 
-function getLineForEvent(event) {
+export function getLineForEvent(event: pryv.Event) {
   const line = {
-    description: "",
     formLabel: "Unknown",
     formType: "Unknown",
     repeatable: "any",
     streamAndType: event.streamId + " - " + event.type,
-    time: new Date(event.time * 1000).toISOString(),
+    time: new Date(event.time * 1000).toLocaleString(),
     value: JSON.stringify(event.content),
+    streamId: event.streamIds[0],
+    eventType: event.type,
   };
 
-  const itemDef = model.itemsDefs.forEvent(event, false);
+  const itemDef = getHDSModel().itemsDefs.forEvent(event, false);
+
   if (itemDef) {
-    line.streamId = event.streamIds[0];
-    line.eventType = event.type;
     line.formLabel = itemDef.label;
     line.formType = itemDef.data.type;
     line.repeatable = itemDef.data.repeatable;
@@ -110,20 +93,24 @@ function getLineForEvent(event) {
     }
     if (line.formType === "select") {
       line.value = event.content;
+      let valueForSelect = event.content;
       if (event.type === "ratio/generic") {
-        line.value = event.content.value;
+        line.value = event.content.value + "/" + event.content.relativeTo;
+        valueForSelect = event.content.value;
       }
 
-      const selected = itemDef.data.options.find((o) => o.value === line.value);
-      line.description = selected != null ? l(selected.label) : "-";
+      console.log("ItemDef Options", itemDef.data.options, event.content);
+      const selected = itemDef.data.options.find(
+        (o) => o.value === valueForSelect,
+      );
+      line.value = selected != null ? l(selected.label) : "-";
     }
     if (line.formType === "checkbox") {
       if (event.type === "activity/plain") {
-        line.description = "Yes";
-        line.value = "x";
+        line.value = "Yes";
       }
     }
-    if (event.streamId === "body-weight") {
+    if (event.streamId === "body-weight" && event.type.startsWith("mass/")) {
       const units = event.type.split("/").pop();
       line.value = `${line.value} ${units}`;
     }
@@ -131,66 +118,16 @@ function getLineForEvent(event) {
   return line;
 }
 
-async function getPatientData(invite) {
-  const patientData = [];
-  const queryParams = { limit: 10000 };
-  function forEachEvent(event) {
-    patientData.push(getLineForEvent(event));
-  }
-
-  await invite.connection.getEventsStreamed(queryParams, forEachEvent);
-  return patientData;
-}
-
-async function getPatients(collector) {
-  // check inbox for new incoming accepted requests
-  const newCollectorInvites = await collector.checkInbox();
-  console.log("## getPatients inbox ", newCollectorInvites);
-
-  // get all patients
-  const patients = await collector.getInvites();
-  const activePatients = [];
-  patients.sort((a, b) => b.dateCreation - a.dateCreation); // sort by creation date reverse
-  for (const patient of patients) {
-    if (patient.status === "active") {
-      patient.viewLink = `/patients/${collector.streamId}/${patient.key}`;
-      activePatients.push([collector.streamId, patient.key]);
-    } else if (patient.status === "pending") {
-      const inviteSharingData = await patient.getSharingData();
-      const patientURL = "https://whatever.backloop.dev:4443/patient.html";
-      patient.sharingLink = `${patientURL}?apiEndpoint=${inviteSharingData.apiEndpoint}&eventId=${inviteSharingData.eventId}`;
-    }
-  }
-  console.log("## getPatients patients ", patients);
-
-  activePatients.forEach(([collectorId, inviteKey]) =>
-    showPatientDetails(collectorId, inviteKey),
-  );
-
-  return patients;
-}
-
-function hdsModel() {
-  if (!model) {
-    throw new Error("Initialize model with `initHDSModel()` first");
-  }
-  return model;
-}
-
 /**
  * Right after logging in:
  * Check if the account has the two forms
  * This step will be implemented in the doctor dashboard when the "create form" will be developed
  * */
-async function initDemoAccount(apiEndpoint) {
-  drConnection = await connectAPIEndpoint(apiEndpoint);
-  const drConnectionInfo = await drConnection.accessInfo();
-  console.log("## initDemoAccount - drConnectionInfo", drConnectionInfo);
-  localStorage.setItem("user", drConnectionInfo.user.username);
-  appManaging = await appTemplates.AppManagingAccount.newFromConnection(
-    APP_MANAGING_STREAMID,
-    drConnection,
-  );
+async function initDemoAccount() {
+  if (appManaging == null) {
+    throw new Error("appManaging is null");
+  }
+  const drConnectionInfo = await appManaging.connection.accessInfo();
 
   // -- check current collectors (forms)
   const collectors = await appManaging.getCollectors();
@@ -212,7 +149,7 @@ async function initDemoAccount(apiEndpoint) {
     }
     // 2 - get the permissions with eventual preRequest
     const preRequest = questionary.permissionsPreRequest || [];
-    const permissions = hdsModel().authorizations.forItemKeys(itemKeys, {
+    const permissions = getHDSModel().authorizations.forItemKeys(itemKeys, {
       preRequest,
     });
 
@@ -246,47 +183,12 @@ async function initDemoAccount(apiEndpoint) {
     console.log("## initDemoAccount published", newCollector);
   }
   console.log("## initDemoAccount with", collectors);
-
-  // TODO: Make this work
-  const defaultSettings = { lang: "en", theme: "dark" };
-  await appManaging.setCustomSettings(defaultSettings);
-  const settings = await appManaging.getCustomSettings();
-  localStorage.setItem("settings", JSON.stringify(settings));
-}
-
-async function initHDSModel() {
-  if (!model) {
-    const service = new pryv.Service(serviceInfoUrl);
-    const serviceInfo = await service.info();
-    model = new HDSModel(serviceInfo.assets["hds-model"]);
-    console.log("## model", model);
-    await model.load();
-  }
-  return model;
-}
-
-function logout() {
-  localStorage.clear();
-  console.log("## logout");
-}
-
-async function setQuestionnaries() {
-  const am = getAppManaging();
-  const collectors = await am.getCollectors();
-  for (const collector of collectors) {
-    props.forms.summary.push({
-      href: `/forms/${collector.id}/patients`,
-      id: collector.id,
-      name: collector.name,
-    });
-    await showQuestionnary(collector.id);
-  }
-  localStorage.setItem("props", JSON.stringify(props));
 }
 
 function showLoginButton(loginSpanId, stateChangeCallBack) {
   const authSettings = {
     authRequest: {
+      returnURL: "self#",
       clientData: {
         "app-web-auth:description": {
           content:
@@ -323,116 +225,27 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
     // called each time the authentication state changes
     console.log("## pryvAuthStateChange", state);
     if (state.id === pryv.Browser.AuthStates.AUTHORIZED) {
-      await initDemoAccount(state.apiEndpoint);
+      if (appManaging == null) {
+        await initHDSModel(); // hds model needs to be initialized
+        appManaging = await appTemplates.AppManagingAccount.newFromApiEndpoint(
+          APP_MANAGING_STREAMID,
+          state.apiEndpoint,
+          APP_MANAGING_NAME,
+        );
+        await initDemoAccount();
+      } else {
+        console.log("!!!! AppManaging already initialized");
+      }
       stateChangeCallBack("loggedIN");
     }
-    if (state.id === pryv.Browser.AuthStates.INITIALIZED) {
-      drConnection = null;
+    if (
+      state.id === pryv.Browser.AuthStates.INITIALIZED ||
+      state.id === pryv.Browser.AuthStates.SIGNOUT
+    ) {
       appManaging = null;
       stateChangeCallBack("loggedOUT");
     }
   }
 }
 
-async function showPatientDetails(collectorId, inviteKey) {
-  // get app from state management
-  const am = getAppManaging();
-  const collector = await am.getCollectorById(collectorId);
-  const invite = await collector.getInviteByKey(inviteKey);
-  console.log("## loaded with invite", invite);
-
-  const lines = await getPatientData(invite);
-  const entries = Object.entries(lines);
-  props[inviteKey] = {
-    columns: [i18next.t("date"), i18next.t("label"), i18next.t("value")],
-    name: invite.eventData.content.name,
-  };
-  props[inviteKey].data = entries
-    .filter(([, v]) => v.repeatable !== "none")
-    .map(([, v]) => ({
-      date: v.time,
-      label: v.formLabel,
-      value: (v.description ?? v.value).replace(/"/g, ""),
-    }));
-  props[inviteKey].info = entries
-    .filter(([, v]) => v.repeatable === "none")
-    .reverse()
-    .map(([, v]) => ({
-      label: v.formLabel,
-      value: (v.description ?? v.value).replace(/"/g, ""),
-    }));
-  console.log("## props", props);
-  localStorage.setItem("props", JSON.stringify(props));
-}
-
-async function showQuestionnary(questionaryId) {
-  const form = (props.forms[questionaryId] = {});
-
-  const am = getAppManaging();
-  const collector = await am.getCollectorById(questionaryId);
-  await collector.init(); // load controller data only when needed
-  // show details
-  const { requestContent } = collector.statusData;
-  form.consent = l(requestContent.consent);
-  form.requester = requestContent.requester?.name;
-  form.description = l(requestContent.description);
-  form.permissions = {};
-  if (requestContent.permissions) {
-    form.permissions.read = requestContent.permissions
-      .filter((p) => p.level === "read")
-      .map((p) => p.defaultName);
-  }
-  form.title = l(requestContent.title);
-
-  const patients = await getPatients(collector);
-  form.data = patients.map((x) => ({
-    date: x.dateCreation.toLocaleString(),
-    reference: x.displayName ?? x.inviteName,
-    sharingLink: x.sharingLink,
-    status: x.status,
-    viewLink: x.viewLink,
-  }));
-
-  const base = `/forms/${collector.id}`;
-  const tabs = [
-    { href: `${base}/patients`, label: i18next.t("patients") },
-    { href: `${base}/details`, label: i18next.t("formDetails") },
-  ];
-
-  const keyTitles = { itemKeys: "ItemKeys", name: "Name", type: "Type" };
-  const forms = requestContent.app?.data?.forms
-    ? Object.values(requestContent.app.data.forms)
-    : [];
-  for (const [key] of Object.entries(keyTitles)) {
-    for (const f of forms) {
-      const id = f.key;
-      const title = f.name;
-      if (key === "itemKeys") {
-        form[id] = { title: title };
-        switch (f.type) {
-          case "permanent":
-            form[id].type = i18next.t("permanent");
-            break;
-          case "recurring":
-            form[id].type = i18next.t("recurring");
-            break;
-          default:
-            form[id].type = f.type;
-        }
-        form[id].itemDefs = f.itemKeys.map((itemKey) => {
-          const itemDef = model.itemsDefs.forKey(itemKey);
-          return itemDef.data;
-        });
-      } else if (key === "name") {
-        tabs.push({
-          href: `${base}/section-${id}`,
-          label: `${i18next.t("section")} ${title}`,
-        });
-      }
-    }
-  }
-
-  form.tabs = tabs;
-}
-
-export { logout, setQuestionnaries, showLoginButton };
+export { getAppManaging, showLoginButton };
