@@ -4,7 +4,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import backloop from "vite-plugin-backloop.dev";
 
 export default defineConfig({
-  plugins: [tailwindcss(), tsconfigPaths(), backloop("funky", 5565)],
+  plugins: [tailwindcss(), tsconfigPaths(), backloop("dr-app", 5565)],
   build: {
     outDir: "dist",
   },

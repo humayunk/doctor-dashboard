@@ -5,9 +5,7 @@ const APP_MANAGING_NAME = "HDS Dr App PoC";
 /** The "base" stream for this App */
 const APP_MANAGING_STREAMID = "app-dr-hds";
 /** initialized during pryvAuthStateChange */
-let appManaging: appTemplates.AppManagingAccount;
-/** Marked as "OLD" but still seems necessary */
-let drConnection = null;
+let appManaging: appTemplates.AppManagingAccount | null;
 
 /** following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/ */
 const serviceInfoUrl = "https://demo.datasafe.dev/reg/service/info";
@@ -66,20 +64,9 @@ const v2 = {
 };
 
 /**
- * Return pryv.Connection with property HDSModel Loaded
- * @param {string} apiEndpoint
- * @returns
+ * exposes appManaging to the app
  */
-async function connectAPIEndpoint(apiEndpoint) {
-  const connection = new pryv.Connection(apiEndpoint);
-  connection.hdsModel = await initHDSModel();
-  return connection;
-}
-
-/**
- * exposes appManaging for the app
- */
-function getAppManaging(): appTemplates.AppManagingAccount {
+function getAppManaging(): appTemplates.AppManagingAccount | null {
   return appManaging;
 }
 
@@ -136,14 +123,11 @@ export function getLineForEvent(event: pryv.Event) {
  * Check if the account has the two forms
  * This step will be implemented in the doctor dashboard when the "create form" will be developed
  * */
-async function initDemoAccount(apiEndpoint) {
-  drConnection = await connectAPIEndpoint(apiEndpoint);
-  const drConnectionInfo = await drConnection.accessInfo();
-  await initHDSModel();
-  appManaging = await appTemplates.AppManagingAccount.newFromConnection(
-    APP_MANAGING_STREAMID,
-    drConnection,
-  );
+async function initDemoAccount() {
+  if (appManaging == null) {
+    throw new Error("appManaging is null");
+  }
+  const drConnectionInfo = await appManaging.connection.accessInfo();
 
   // -- check current collectors (forms)
   const collectors = await appManaging.getCollectors();
@@ -208,6 +192,7 @@ function logout() {
 function showLoginButton(loginSpanId, stateChangeCallBack) {
   const authSettings = {
     authRequest: {
+      returnURL: "self#",
       clientData: {
         "app-web-auth:description": {
           content:
@@ -244,11 +229,20 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
     // called each time the authentication state changes
     console.log("## pryvAuthStateChange", state);
     if (state.id === pryv.Browser.AuthStates.AUTHORIZED) {
-      await initDemoAccount(state.apiEndpoint);
+      if (appManaging == null) {
+        await initHDSModel(); // hds model needs to be initialized
+        appManaging = await appTemplates.AppManagingAccount.newFromApiEndpoint(
+          APP_MANAGING_STREAMID,
+          state.apiEndpoint,
+          APP_MANAGING_NAME,
+        );
+        await initDemoAccount();
+      } else {
+        console.log("!!!! AppManaging already initialized");
+      }
       stateChangeCallBack("loggedIN");
     }
     if (state.id === pryv.Browser.AuthStates.INITIALIZED) {
-      drConnection = null;
       appManaging = null;
       stateChangeCallBack("loggedOUT");
     }
