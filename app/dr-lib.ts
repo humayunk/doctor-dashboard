@@ -185,10 +185,6 @@ async function initDemoAccount() {
   console.log("## initDemoAccount with", collectors);
 }
 
-function logout() {
-  console.log("## logout");
-}
-
 function showLoginButton(loginSpanId, stateChangeCallBack) {
   const authSettings = {
     authRequest: {
@@ -242,7 +238,10 @@ function showLoginButton(loginSpanId, stateChangeCallBack) {
       }
       stateChangeCallBack("loggedIN");
     }
-    if (state.id === pryv.Browser.AuthStates.INITIALIZED) {
+    if (
+      state.id === pryv.Browser.AuthStates.INITIALIZED ||
+      state.id === pryv.Browser.AuthStates.SIGNOUT
+    ) {
       appManaging = null;
       stateChangeCallBack("loggedOUT");
     }

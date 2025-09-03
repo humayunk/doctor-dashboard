@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { useAppContext } from "@/context/AppContext";
 
+import { getAppManaging, showLoginButton } from "@/dr-lib";
+
 function FormEntry({ href, name }) {
   const isCurrent = getId(window.location.pathname) === getId(href);
   const classes = isCurrent
@@ -28,28 +30,33 @@ function Sidebar() {
   const [forms, setForms] = useState<
     { href: string; id: string; name: string }[]
   >([]);
-  const [username, setUsername] = useState("");
 
-  function logout() {
-    updateAppManaging(null);
-  }
+  useEffect(() => {
+    showLoginButton("login-button", async (state: string) => {
+      updateAppManaging(getAppManaging());
+      console.log("=== signing button new state", state);
+      if (state === "loggedIN") {
+        // navigate("/forms");
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const updateForms = async () => {
-      if (appManaging == null) return;
-      const collectors = await appManaging.getCollectors();
+      console.log("Effect: Update forms");
       const forms = [];
-      for (const collector of collectors) {
-        forms.push({
-          href: `/forms/${collector.id}/patients`,
-          id: collector.id,
-          name: collector.name,
-        });
+      if (appManaging != null) {
+        const collectors = await appManaging.getCollectors();
+        for (const collector of collectors) {
+          forms.push({
+            href: `/forms/${collector.id}/patients`,
+            id: collector.id,
+            name: collector.name,
+          });
+        }
       }
       console.log("###forms", forms);
       setForms(forms);
-      const drConnectionInfo = await appManaging.connection.accessInfo();
-      setUsername(drConnectionInfo.user.username + "");
     };
 
     updateForms();
@@ -121,16 +128,7 @@ function Sidebar() {
               </NavLink>
             </li>
             <li>
-              <NavLink
-                className="group flex items-center rounded-lg p-2 text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                onClick={logout}
-                to="/"
-              >
-                <img src="https://style.datasafe.dev/images/icons/arrow-left-to-bracket.svg" />
-                <span className="ms-3 flex-1 whitespace-nowrap dark:text-gray-300">
-                  {username}: {t("logOut")}
-                </span>
-              </NavLink>
+              <span id="login-button"></span>
             </li>
           </ul>
         </div>
