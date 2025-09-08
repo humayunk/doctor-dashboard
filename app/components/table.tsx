@@ -63,4 +63,4 @@ function TableData({ item, row }) {
   return <td className="px-6 py-4">{row[item]}</td>;
 }
 
-export { Header, Table };
+export {  Table };

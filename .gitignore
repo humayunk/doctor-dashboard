@@ -2,3 +2,4 @@
 /.react-router/
 /build/
 /node_modules/
+/dist/
