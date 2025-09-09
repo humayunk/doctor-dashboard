@@ -90,7 +90,7 @@ function Breadcrumbs() {
   );
 }
 
-function ModernHeader() {
+export function ModernHeader() {
   const { t } = useTranslation();
 
   return (

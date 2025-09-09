@@ -112,7 +112,7 @@ export function SecurityStatus({ variant = 'full', showDetails = true }: Securit
   );
 }
 
-function DataEncryptionIndicator() {
+export function DataEncryptionIndicator() {
   return (
     <div className="flex items-center gap-2 px-2 py-1 bg-blue-50 border border-blue-200 rounded text-xs">
       <Lock className="h-3 w-3 text-blue-600" />
@@ -121,7 +121,7 @@ function DataEncryptionIndicator() {
   );
 }
 
-function PrivacyConsentStatus({ status }: { status: 'granted' | 'pending' | 'revoked' }) {
+export function PrivacyConsentStatus({ status }: { status: 'granted' | 'pending' | 'revoked' }) {
   const getStatusConfig = () => {
     switch (status) {
       case 'granted':

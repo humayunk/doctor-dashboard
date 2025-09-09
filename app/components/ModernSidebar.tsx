@@ -70,7 +70,7 @@ function FormEntry({ form }: { form: FormEntry }) {
   );
 }
 
-function ModernSidebar() {
+export function ModernSidebar() {
   const { t } = useTranslation();
   const { appManaging, updateAppManaging } = useAppContext();
   const [forms, setForms] = useState<FormEntry[]>([]);
@@ -244,7 +244,9 @@ function ModernSidebar() {
 
             {/* Login Button */}
             <div className="pt-2">
-              <span id="login-button"></span>
+              <div className="login-button-container">
+                <span id="login-button"></span>
+              </div>
             </div>
           </div>
         </div>

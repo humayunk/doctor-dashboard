@@ -41,5 +41,8 @@
   "submissionDate": "Submission Date",
   "theme": "Theme",
   "value": "Value",
-  "viewData": "View data"
+  "viewData": "View data",
+  "dashboard": "Dashboard",
+  "details": "Details",
+  "loading": "Loading"
 }
